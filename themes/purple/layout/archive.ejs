@@ -1,0 +1,23 @@
+<h1 class="page-title"><%= page.title || '归档' %></h1>
+
+<section class="archive-list">
+<% let lastYear = null; %>
+<% page.posts.each(function (post) { %>
+  <% const y = date(post.date, 'YYYY'); %>
+  <% if (y !== lastYear) { lastYear = y; %>
+    <h2 class="year"><%= y %></h2>
+  <% } %>
+  <div class="archive-item">
+    <span class="archive-date"><%= date(post.date, 'MM-DD') %></span>
+    <a href="<%- url_for(post.path) %>"><%= post.title %></a>
+  </div>
+<% }) %>
+</section>
+
+<% if (page.total > 1) { %>
+<nav class="pager">
+  <% if (page.prev) { %><a class="card pager-btn" href="<%- url_for(page.prev_link) %>">← 上一页</a><% } %>
+  <span class="pager-info"><%= page.current %> / <%= page.total %></span>
+  <% if (page.next) { %><a class="card pager-btn" href="<%- url_for(page.next_link) %>">下一页 →</a><% } %>
+</nav>
+<% } %>

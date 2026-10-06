@@ -1,0 +1,26 @@
+<section class="post-list">
+<% page.posts.each(function (post) { %>
+  <a class="card post-card" href="<%- url_for(post.path) %>">
+    <h2><%= post.title %></h2>
+    <div class="meta">
+      <span><%= date(post.date, 'YYYY-MM-DD') %></span>
+      <% if (post.categories && post.categories.length) { %>
+        <span class="dot">·</span>
+        <% post.categories.each(function (c) { %><span class="cat"><%= c.name %></span><% }) %>
+      <% } %>
+      <% if (post.tags && post.tags.length) { %>
+        <% post.tags.each(function (t) { %><span class="tag">#<%= t.name %></span><% }) %>
+      <% } %>
+    </div>
+    <p class="excerpt"><%= post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().substring(0, 120) %>…</p>
+  </a>
+<% }) %>
+</section>
+
+<% if (page.total > 1) { %>
+<nav class="pager">
+  <% if (page.prev) { %><a class="card pager-btn" href="<%- url_for(page.prev_link) %>">← 上一页</a><% } %>
+  <span class="pager-info"><%= page.current %> / <%= page.total %></span>
+  <% if (page.next) { %><a class="card pager-btn" href="<%- url_for(page.next_link) %>">下一页 →</a><% } %>
+</nav>
+<% } %>

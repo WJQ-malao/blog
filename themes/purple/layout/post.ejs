@@ -1,0 +1,29 @@
+<article class="card post-full">
+  <h1 class="post-title"><%= page.title %></h1>
+  <div class="meta">
+    <span><%= date(page.date, 'YYYY-MM-DD') %></span>
+    <% if (page.categories && page.categories.length) { %>
+      <span class="dot">·</span>
+      <% page.categories.each(function (c) { %>
+        <a class="cat" href="<%- url_for(c.path) %>"><%= c.name %></a>
+      <% }) %>
+    <% } %>
+    <% if (page.tags && page.tags.length) { %>
+      <% page.tags.each(function (t) { %>
+        <a class="tag" href="<%- url_for(t.path) %>">#<%= t.name %></a>
+      <% }) %>
+    <% } %>
+  </div>
+  <div class="content">
+    <%- page.content %>
+  </div>
+</article>
+
+<nav class="post-nav">
+  <% if (page.prev) { %>
+    <a class="card pager-btn" href="<%- url_for(page.prev.path) %>">← <%= page.prev.title %></a>
+  <% } %>
+  <% if (page.next) { %>
+    <a class="card pager-btn next" href="<%- url_for(page.next.path) %>"><%= page.next.title %> →</a>
+  <% } %>
+</nav>

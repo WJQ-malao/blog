@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><% if (page.title) { %><%= page.title %> · <% } %>吴锦渠的技术博客</title>
+<meta name="description" content="吴锦渠的个人技术博客，记录学习笔记与技术思考">
+<link rel="icon" href="/img/avatar.svg" type="image/svg+xml">
+<%- css('css/style') %>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.svg" alt="吴锦渠的头像">
+    <span>吴锦渠</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+  </div>
+</nav>
+
+<main class="container">
+<%- body %>
+</main>
+
+<footer>© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne</footer>
+
+</body>
+</html>
