@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吴锦渠 · 个人主页</title>
+<meta name="description" content="吴锦渠的个人主页与技术博客">
+<link rel="icon" href="/img/avatar.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  /* 背景光斑 */
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  /* 顶部导航 */
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(1080px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .brand span {
+    font-size: 17px; font-weight: 700;
+    background: linear-gradient(90deg, #c4b5fd, #8b5cf6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: #b8b3cc; text-decoration: none; font-size: 15px;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  /* 主视觉区 */
+  .hero {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(1080px, calc(100% - 48px));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 64px 0;
+  }
+  .hero-text { max-width: 560px; }
+  .hero-text h1 {
+    font-size: clamp(44px, 7vw, 72px);
+    line-height: 1.15;
+    background: linear-gradient(90deg, #c4b5fd, #8b5cf6 55%, #6d28d9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 24px;
+  }
+  .hero-text p {
+    font-size: clamp(17px, 2.2vw, 22px);
+    line-height: 1.7;
+    color: #cfcadd;
+    margin-bottom: 40px;
+  }
+  .cta {
+    display: inline-block;
+    padding: 15px 38px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+    border-radius: 999px;
+    box-shadow: 0 8px 30px rgba(139, 92, 246, .45);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .cta:hover { transform: translateY(-3px); box-shadow: 0 12px 38px rgba(139, 92, 246, .6); }
+
+  .hero-avatar { flex-shrink: 0; }
+  .hero-avatar img {
+    width: clamp(220px, 26vw, 320px);
+    height: clamp(220px, 26vw, 320px);
+    border-radius: 50%;
+    border: 3px solid rgba(167, 139, 250, .55);
+    box-shadow: 0 0 60px rgba(139, 92, 246, .45), inset 0 0 30px rgba(0, 0, 0, .3);
+    background: #1b0f30;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #7d7696;
+  }
+
+  @media (max-width: 760px) {
+    .hero { flex-direction: column-reverse; text-align: center; padding: 40px 0; }
+    .nav-links { gap: 18px; }
+    .hero-text p { margin-bottom: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.svg" alt="吴锦渠的头像">
+    <span>吴锦渠</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://github.com/WJQ-malao" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<main class="hero">
+  <div class="hero-text">
+    <h1>吴锦渠</h1>
+    <p>你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。</p>
+    <a class="cta" href="/blog/">进入我的博客 →</a>
+  </div>
+  <div class="hero-avatar">
+    <img src="/img/avatar.svg" alt="吴锦渠">
+  </div>
+</main>
+
+<footer>© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne</footer>
+
+</body>
+</html>

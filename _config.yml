@@ -28,7 +28,7 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
-skip_render:
+skip_render: index.html
 
 # Writing
 new_post_name: :title.md # File name of new posts
@@ -60,7 +60,7 @@ prismjs:
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
+  path: 'blog'
   per_page: 10
   order_by: -date
 
@@ -92,6 +92,9 @@ pagination_dir: page
 include:
 exclude:
 ignore:
+
+# 首页为手写的个人主页（source/index.html，已在 skip_render 中跳过渲染）
+# 博客文章列表在上面的 index_generator 中移到了 /blog/
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/

@@ -6,6 +6,7 @@ variant: cyberpunk
 navbar:
   menu:
     首页: /
+    博客: /blog
     归档: /archives
   links:
     GitHub:
