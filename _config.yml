@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 我的博客
-subtitle: ''
-description: '个人学习笔记与随笔'
-keywords:
-author: 博主
+title: 吴锦渠的技术博客
+subtitle: '代码 · 笔记 · 思考'
+description: '吴锦渠的个人技术博客，记录学习笔记与技术思考'
+keywords: 技术博客,编程,学习笔记
+author: 吴锦渠
 language: zh-CN
 timezone: 'Asia/Shanghai'
 
@@ -96,7 +96,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: icarus
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
