@@ -101,6 +101,13 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: purple
 
+# RSS 订阅（hexo-generator-feed）
+feed:
+  enable: true
+  type: atom
+  path: atom.xml
+  limit: 20
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
