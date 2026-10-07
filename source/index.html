@@ -11,252 +11,152 @@
   html, body { height: 100%; }
   body {
     font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
-    background: #5563c1;
-    color: #ffffff;
-    height: 100vh;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
   }
+  /* 背景光斑 */
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
 
-  /* ===== 顶部栏 ===== */
-  .topbar {
+  /* 顶部导航 */
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(1080px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #f5f3ee;
-    color: #222;
-    padding: 0 20px;
-    height: 44px;
-    flex-shrink: 0;
-    border-bottom: 3px solid #222;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
-  .topbar-left { display: flex; align-items: center; gap: 22px; }
-  .logo {
-    font-weight: 900;
-    font-size: 18px;
-    background: #ffd54f;
-    border: 2px solid #222;
-    border-radius: 6px;
-    padding: 1px 9px;
-    text-decoration: none;
-    color: #222;
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .brand span {
+    font-size: 17px; font-weight: 700;
+    background: linear-gradient(90deg, #c4b5fd, #8b5cf6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .topbar-nav { display: flex; gap: 20px; }
-  .topbar-nav a {
-    color: #222;
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 1px;
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: #b8b3cc; text-decoration: none; font-size: 15px;
+    transition: color .2s;
   }
-  .topbar-nav a:hover { background: #ffd54f; border-radius: 4px; }
-  .clock { font-family: Consolas, monospace; font-weight: 700; font-size: 15px; }
+  .nav-links a:hover { color: #c4b5fd; }
 
-  /* ===== 主区域 ===== */
-  main {
-    flex: 1;
+  /* 主视觉区 */
+  .hero {
     position: relative;
-    padding: clamp(30px, 7vh, 80px) clamp(24px, 6vw, 80px);
-    overflow: hidden;
+    z-index: 1;
+    flex: 1;
+    width: min(1080px, calc(100% - 48px));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 64px 0;
   }
-  .typewriter {
-    font-weight: 900;
-    font-size: clamp(38px, 7.5vw, 96px);
-    line-height: 1.18;
-    letter-spacing: 1px;
-    white-space: pre-wrap;
-    word-break: break-all;
+  .hero-text { max-width: 560px; }
+  .hero-text h1 {
+    font-size: clamp(44px, 7vw, 72px);
+    line-height: 1.15;
+    background: linear-gradient(90deg, #c4b5fd, #8b5cf6 55%, #6d28d9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 24px;
   }
-  .typewriter .accent { color: #ffd54f; }
-  .cursor {
+  .hero-text p {
+    font-size: clamp(17px, 2.2vw, 22px);
+    line-height: 1.7;
+    color: #cfcadd;
+    margin-bottom: 40px;
+  }
+  .cta {
     display: inline-block;
-    width: .55em;
-    height: 1em;
-    background: #fff;
-    margin-left: 6px;
-    vertical-align: -0.08em;
-    animation: blink .8s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* ===== 右侧图标栏 ===== */
-  .dock {
-    position: absolute;
-    right: 26px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    z-index: 5;
-  }
-  .dock-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
+    padding: 15px 38px;
+    font-size: 16px;
+    font-weight: 600;
     color: #fff;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
+    text-decoration: none;
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+    border-radius: 999px;
+    box-shadow: 0 8px 30px rgba(139, 92, 246, .45);
+    transition: transform .2s, box-shadow .2s;
   }
-  .dock-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 3px solid #222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 3px 3px 0 rgba(0,0,0,.35);
-    transition: transform .15s;
-  }
-  .dock-item:hover .dock-icon { transform: scale(1.12) rotate(-4deg); }
-  .dock-label { font-size: 12.5px; font-weight: 700; text-shadow: 1px 1px 0 rgba(0,0,0,.3); }
-  .dock-count { font-size: 11.5px; color: #ffd54f; font-weight: 800; }
+  .cta:hover { transform: translateY(-3px); box-shadow: 0 12px 38px rgba(139, 92, 246, .6); }
 
-  /* ===== 底部状态栏 ===== */
-  .bottombar {
-    display: flex;
-    flex-shrink: 0;
-    border-top: 3px solid #222;
-    background: #4a57ad;
-    font-family: Consolas, "Courier New", monospace;
-    font-size: clamp(11px, 1.3vw, 15px);
-    font-weight: 700;
+  .hero-avatar { flex-shrink: 0; }
+  .hero-avatar img {
+    width: clamp(220px, 26vw, 320px);
+    height: clamp(220px, 26vw, 320px);
+    border-radius: 50%;
+    border: 3px solid rgba(167, 139, 250, .55);
+    box-shadow: 0 0 60px rgba(139, 92, 246, .45), inset 0 0 30px rgba(0, 0, 0, .3);
+    background: #1b0f30;
   }
-  .bottombar .cell {
-    padding: 12px 18px;
-    border-right: 3px solid #222;
-    white-space: nowrap;
-    overflow: hidden;
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #7d7696;
   }
-  .bottombar .cell.grow { flex: 1; text-align: center; }
-  .bottombar .kw { color: #ffd54f; }
-  .bottombar .val { color: #fff; }
-  .bottombar .site { color: #ffd54f; letter-spacing: 1px; }
 
   @media (max-width: 760px) {
-    .topbar-nav { gap: 12px; }
-    .topbar-nav a { font-size: 12px; }
-    .dock { right: 12px; gap: 14px; }
-    .dock-icon { width: 42px; height: 42px; font-size: 19px; }
-    .bottombar .cell:nth-child(3) { display: none; }
+    .hero { flex-direction: column-reverse; text-align: center; padding: 40px 0; }
+    .nav-links { gap: 18px; }
+    .hero-text p { margin-bottom: 32px; }
   }
 </style>
 </head>
 <body>
 
-<!-- 顶部栏 -->
-<header class="topbar">
-  <div class="topbar-left">
-    <a class="logo" href="/">WJQ</a>
-    <nav class="topbar-nav">
-      <a href="/">HOME</a>
-      <a href="/blog/">BLOG</a>
-      <a href="/archives/">ARCHIVE</a>
-      <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">GITEE</a>
-      <a href="/subscribe/">RSS</a>
-    </nav>
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="吴锦渠的头像">
+    <span>吴锦渠</span>
+  </a>
+  <div class="nav-links">
+    <a href="/" data-zh="首页" data-en="Home">首页</a>
+    <a href="/blog/" data-zh="博客" data-en="Blog">博客</a>
+    <a href="/archives/" data-zh="归档" data-en="Archives">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/" title="RSS 订阅">RSS</a>
+    <a href="javascript:;" class="lang-toggle">English</a>
   </div>
-  <div class="clock" id="clock">00:00:00</div>
-</header>
+</nav>
 
-<!-- 主区域 -->
-<main>
-  <div class="typewriter"><span id="typed"></span><span class="cursor" id="cursor"></span></div>
-
-  <!-- 右侧图标栏 -->
-  <aside class="dock">
-    <button class="dock-item" onclick="like(this)" title="点赞">
-      <span class="dock-icon" style="background:#ff8fa3">👍</span>
-      <span class="dock-label">点赞</span>
-      <span class="dock-count" id="likeCount"></span>
-    </button>
-    <a class="dock-item" href="https://gitee.com/wujiang-j" target="_blank" rel="noopener" title="去 Gitee 留言">
-      <span class="dock-icon" style="background:#4dd0e1">💬</span>
-      <span class="dock-label">留言</span>
-    </a>
-    <a class="dock-item" href="/subscribe/" title="RSS 订阅说明">
-      <span class="dock-icon" style="background:#ffd54f">💡</span>
-      <span class="dock-label">订阅</span>
-    </a>
-    <a class="dock-item" href="/blog/" title="进入博客">
-      <span class="dock-icon" style="background:#b39ddb">📝</span>
-      <span class="dock-label">博客</span>
-    </a>
-  </aside>
+<main class="hero">
+  <div class="hero-text">
+    <h1>吴锦渠</h1>
+    <p data-zh="你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。" data-en="Hi, I'm Wu Jinqu. This is my personal space,<br>where I share code, notes and ideas.">你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。</p>
+    <a class="cta" href="/blog/" data-zh="进入我的博客 →" data-en="Read My Blog →">进入我的博客 →</a>
+  </div>
+  <div class="hero-avatar">
+    <img src="/img/avatar.jpg" alt="吴锦渠">
+  </div>
 </main>
 
-<!-- 底部状态栏 -->
-<footer class="bottombar">
-  <div class="cell"><span class="kw">const</span> <span class="val">Date = <span id="date"></span></span></div>
-  <div class="cell"><span class="kw">const</span> <span class="val">UseTime = <span id="usetime">0.0</span>s</span></div>
-  <div class="cell"><span class="kw">const</span> <span class="val">Add = 中国</span></div>
-  <div class="cell grow site">WWW.WJQBLOG.CN</div>
-  <div class="cell"><span class="val">FREEDOM!</span></div>
-</footer>
+<footer data-zh="© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne" data-en="© 2026 Wu Jinqu · Powered by Hexo &amp; EdgeOne">© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne</footer>
 
-<script>
-// ===== 打字机 =====
-var lines = [
-  'Hey There',
-  "I'm 吴锦渠",
-  "( σ'ω')σ #Blog"
-];
-var typedEl = document.getElementById('typed');
-var li = 0, ci = 0;
-function type() {
-  if (li >= lines.length) return;
-  var line = lines[li];
-  if (ci < line.length) {
-    typedEl.textContent += line[ci++];
-    setTimeout(type, 90);
-  } else {
-    if (li < lines.length - 1) {
-      typedEl.textContent += '\n';
-      li++; ci = 0;
-      setTimeout(type, 400);
-    } else {
-      li++; // 完成
-    }
-  }
-}
-type();
-
-// ===== 时钟 =====
-function tick() {
-  var d = new Date();
-  function p(n) { return String(n).padStart(2, '0'); }
-  document.getElementById('clock').textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
-  document.getElementById('date').textContent = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
-}
-setInterval(tick, 1000);
-tick();
-
-// ===== 使用时长 =====
-var t0 = Date.now();
-setInterval(function () {
-  document.getElementById('usetime').textContent = ((Date.now() - t0) / 1000).toFixed(1);
-}, 100);
-
-// ===== 点赞（本地计数） =====
-var LIKE_KEY = 'site-likes';
-var likes = parseInt(localStorage.getItem(LIKE_KEY) || '0', 10);
-function renderLikes() {
-  document.getElementById('likeCount').textContent = likes > 0 ? '+' + likes : '';
-}
-function like() {
-  likes++;
-  localStorage.setItem(LIKE_KEY, String(likes));
-  renderLikes();
-}
-renderLikes();
-</script>
-
+<script src="/js/lang.js"></script>
 </body>
 </html>
