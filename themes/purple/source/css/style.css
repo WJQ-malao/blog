@@ -215,6 +215,10 @@ footer {
   color: #7d7696;
 }
 
+/* 文章页空白区域可点击返回博客列表 */
+.post-page .container { cursor: pointer; }
+.post-page .post-full, .post-page .post-nav { cursor: default; }
+
 @media (max-width: 760px) {
   .nav-links { gap: 16px; }
   .post-full { padding: 26px 22px; }

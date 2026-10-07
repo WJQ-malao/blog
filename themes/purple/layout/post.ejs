@@ -27,3 +27,14 @@
     <a class="card pager-btn next" href="<%- url_for(page.next.path) %>"><%= page.next.title %> →</a>
   <% } %>
 </nav>
+
+<script>
+// 文章页点击空白处返回博客列表
+document.body.classList.add('post-page');
+document.addEventListener('click', function (e) {
+  var t = e.target;
+  if (t === document.body || (t.classList && t.classList.contains('container'))) {
+    window.location.href = '/blog/';
+  }
+});
+</script>
