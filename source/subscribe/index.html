@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订阅我的博客 · 吴锦渠的技术博客</title>
+<meta name="description" content="通过 RSS 订阅吴锦渠的技术博客">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .brand span {
+    font-size: 17px; font-weight: 700;
+    background: linear-gradient(90deg, #c4b5fd, #8b5cf6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(720px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 48px 0 56px;
+  }
+  .card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 36px 40px;
+  }
+  h1 {
+    font-size: 30px;
+    margin-bottom: 18px;
+    background: linear-gradient(90deg, #e9e4fb, #c4b5fd);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  p { color: #cfcadd; margin: .9em 0; font-size: 15.5px; }
+
+  .feed-box {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 22px 0;
+    flex-wrap: wrap;
+  }
+  .feed-url {
+    flex: 1;
+    min-width: 240px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    color: #e9d5ff;
+    background: #10081f;
+    border: 1px solid rgba(167, 139, 250, .35);
+    border-radius: 10px;
+    padding: 12px 16px;
+    word-break: break-all;
+  }
+  .copy-btn {
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(139, 92, 246, .4);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(139, 92, 246, .55); }
+
+  .steps { margin-top: 26px; }
+  .steps h2 { font-size: 19px; color: #e9e4fb; margin: 22px 0 10px; }
+  .steps ol { padding-left: 1.5em; color: #cfcadd; font-size: 15px; }
+  .steps li { margin: .5em 0; }
+  .readers { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .reader-tag {
+    font-size: 13.5px;
+    color: #c4b5fd;
+    border: 1px solid rgba(167, 139, 250, .4);
+    border-radius: 999px;
+    padding: 6px 16px;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: #a78bfa;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .back-link:hover { color: #c4b5fd; }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #7d7696;
+  }
+  @media (max-width: 760px) {
+    .nav-links { gap: 16px; }
+    .card { padding: 26px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="吴锦渠的头像">
+    <span>吴锦渠</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="card">
+    <h1>📡 订阅我的博客</h1>
+    <p>本站支持 RSS 订阅。把下面的订阅地址添加到你喜欢的 RSS 阅读器中，每当我发布新文章，你都会第一时间收到。</p>
+
+    <div class="feed-box">
+      <div class="feed-url" id="feedUrl">https://wjqblog.cn/atom.xml</div>
+      <button class="copy-btn" id="copyBtn" onclick="copyFeed()">复制订阅地址</button>
+    </div>
+
+    <div class="steps">
+      <h2>如何订阅？</h2>
+      <ol>
+        <li>安装一个 RSS 阅读器（任选其一，均免费）</li>
+        <li>在阅读器中找到「添加订阅源 / Add Feed」</li>
+        <li>粘贴上面的订阅地址，确认添加</li>
+        <li>完成！新文章会自动出现在你的阅读器里</li>
+      </ol>
+      <h2>推荐的阅读器</h2>
+      <div class="readers">
+        <span class="reader-tag">Follow</span>
+        <span class="reader-tag">Feedly</span>
+        <span class="reader-tag">Inoreader</span>
+        <span class="reader-tag">irreader</span>
+      </div>
+    </div>
+
+    <a class="back-link" href="/blog/">← 返回博客</a>
+  </div>
+</main>
+
+<footer>© 2026 吴锦渠 · Powered by Hexo &amp; Cloudflare</footer>
+
+<script>
+function copyFeed() {
+  var url = document.getElementById('feedUrl').textContent.trim();
+  var btn = document.getElementById('copyBtn');
+  function done() {
+    btn.textContent = '已复制 ✓';
+    setTimeout(function () { btn.textContent = '复制订阅地址'; }, 2000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  }
+}
+</script>
+
+</body>
+</html>
