@@ -24,9 +24,29 @@
 </nav>
 
 <script>
-// 文章页点击空白处返回博客列表
+// 文章页交互：图片灯箱 + 点击空白返回博客列表
 document.body.classList.add('post-page');
+var lb = null;
+function closeLb() {
+  if (lb) { lb.remove(); lb = null; document.body.style.overflow = ''; }
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeLb();
+});
 document.addEventListener('click', function (e) {
+  // 灯箱打开时：任何点击只负责关闭灯箱，不触发返回
+  if (lb) { closeLb(); return; }
+  // 点击文章内图片：打开灯箱
+  var img = e.target.closest('.content img');
+  if (img) {
+    lb = document.createElement('div');
+    lb.className = 'lightbox-overlay';
+    lb.appendChild(img.cloneNode());
+    document.body.appendChild(lb);
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+  // 点击正文外空白：返回博客列表
   var t = e.target;
   if (t === document.body || (t.classList && t.classList.contains('container'))) {
     window.location.href = '/blog/';

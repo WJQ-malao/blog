@@ -219,8 +219,53 @@ footer {
 .post-page .container { cursor: pointer; }
 .post-page .post-full, .post-page .post-nav { cursor: default; }
 
+/* 图片灯箱 */
+.content img { cursor: zoom-in; }
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(10, 5, 25, .88);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  animation: lb-fade .2s ease;
+}
+.lightbox-overlay img {
+  max-width: 92vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, .6);
+  cursor: zoom-out;
+}
+@keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+
 @media (max-width: 760px) {
-  .nav-links { gap: 16px; }
-  .post-full { padding: 26px 22px; }
+  nav {
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brand img { width: 32px; height: 32px; }
+  .nav-links {
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .nav-links a { font-size: 13.5px; }
+  .container { padding: 28px 0 40px; }
+  .page-title { font-size: 24px; }
   .post-card { padding: 20px 22px; }
+  .post-card h2 { font-size: 19px; }
+  .post-full { padding: 24px 18px; }
+  .post-title { font-size: 24px; }
+  .content { font-size: 15px; }
+  .content figure.highlight { font-size: 12.5px; }
+}
+
+@media (min-width: 761px) and (max-width: 1024px) {
+  .container, nav { width: calc(100% - 64px); }
 }
