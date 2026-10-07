@@ -8,7 +8,7 @@
     });
     document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
     document.querySelectorAll('.lang-toggle').forEach(function (b) {
-      b.textContent = lang === 'en' ? '中文' : 'EN';
+      b.textContent = lang === 'en' ? '中文' : 'English';
     });
     localStorage.setItem(KEY, lang);
   }
