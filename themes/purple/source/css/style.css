@@ -135,7 +135,7 @@ nav {
   background: linear-gradient(90deg, #e9e4fb, #c4b5fd);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.post-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+.post-nav { display: flex; justify-content: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
 .post-nav .next { margin-left: auto; }
 
 /* 正文排版 */

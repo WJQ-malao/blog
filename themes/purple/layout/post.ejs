@@ -20,12 +20,7 @@
 </article>
 
 <nav class="post-nav">
-  <% if (page.prev) { %>
-    <a class="card pager-btn" href="<%- url_for(page.prev.path) %>">← <%= page.prev.title %></a>
-  <% } %>
-  <% if (page.next) { %>
-    <a class="card pager-btn next" href="<%- url_for(page.next.path) %>"><%= page.next.title %> →</a>
-  <% } %>
+  <a class="card pager-btn" href="/blog/" data-zh="← 返回博客列表" data-en="← Back to Blog">← 返回博客列表</a>
 </nav>
 
 <script>
