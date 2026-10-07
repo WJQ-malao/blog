@@ -155,7 +155,7 @@
 
 <main class="hero">
   <div class="hero-text">
-    <h1 class="typed-title"><span id="typed"></span><span class="tw-cursor"></span></h1>
+    <h1 class="typed-title"><span id="typed" data-zh="欢迎来到我的Blog" data-en="Welcome to My Blog"></span><span class="tw-cursor"></span></h1>
     <p class="hero-fade" data-zh="你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。" data-en="Hi, I'm Wu Jinqu. This is my personal space,<br>where I share code, notes and ideas.">你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。</p>
     <a class="cta hero-fade" href="/blog/" data-zh="进入我的博客 →" data-en="Read My Blog →">进入我的博客 →</a>
   </div>
@@ -166,6 +166,7 @@
 (function () {
   var text = (localStorage.getItem('site-lang') === 'en') ? 'Welcome to My Blog' : '欢迎来到我的Blog';
   var el = document.getElementById('typed');
+  el.textContent = '';
   var i = 0;
   function type() {
     if (i < text.length) {
