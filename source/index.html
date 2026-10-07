@@ -69,11 +69,31 @@
     margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 48px;
+    justify-content: center;
+    text-align: center;
     padding: 64px 0;
   }
-  .hero-text { max-width: 560px; }
+  .hero-text { max-width: 100%; }
+  .typed-title { min-height: 1.2em; }
+  .tw-cursor {
+    display: inline-block;
+    width: .5em;
+    height: .95em;
+    margin-left: 6px;
+    vertical-align: -0.1em;
+    background: #a78bfa;
+    animation: tw-blink .8s step-end infinite;
+  }
+  @keyframes tw-blink { 50% { opacity: 0; } }
+  .hero-fade {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .hero-fade.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
   .hero-text h1 {
     font-size: clamp(44px, 7vw, 72px);
     line-height: 1.15;
@@ -101,14 +121,10 @@
   }
   .cta:hover { transform: translateY(-3px); box-shadow: 0 12px 38px rgba(139, 92, 246, .6); }
 
-  .hero-avatar { flex-shrink: 0; }
-  .hero-avatar img {
-    width: clamp(220px, 26vw, 320px);
-    height: clamp(220px, 26vw, 320px);
-    border-radius: 50%;
-    border: 3px solid rgba(167, 139, 250, .55);
-    box-shadow: 0 0 60px rgba(139, 92, 246, .45), inset 0 0 30px rgba(0, 0, 0, .3);
-    background: #1b0f30;
+  @media (max-width: 760px) {
+    .hero { padding: 40px 0; }
+    .nav-links { gap: 18px; }
+    .hero-text p { margin-bottom: 32px; }
   }
 
   footer {
@@ -118,12 +134,6 @@
     padding: 20px;
     font-size: 13px;
     color: #7d7696;
-  }
-
-  @media (max-width: 760px) {
-    .hero { flex-direction: column-reverse; text-align: center; padding: 40px 0; }
-    .nav-links { gap: 18px; }
-    .hero-text p { margin-bottom: 32px; }
   }
 </style>
 </head>
@@ -146,17 +156,30 @@
 
 <main class="hero">
   <div class="hero-text">
-    <h1>吴锦渠</h1>
-    <p data-zh="你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。" data-en="Hi, I'm Wu Jinqu. This is my personal space,<br>where I share code, notes and ideas.">你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。</p>
-    <a class="cta" href="/blog/" data-zh="进入我的博客 →" data-en="Read My Blog →">进入我的博客 →</a>
-  </div>
-  <div class="hero-avatar">
-    <img src="/img/avatar.jpg" alt="吴锦渠">
+    <h1 class="typed-title"><span id="typed"></span><span class="tw-cursor"></span></h1>
+    <p class="hero-fade" data-zh="你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。" data-en="Hi, I'm Wu Jinqu. This is my personal space,<br>where I share code, notes and ideas.">你好，我是吴锦渠。这里是我的个人空间，<br>记录编程、学习笔记与技术思考。</p>
+    <a class="cta hero-fade" href="/blog/" data-zh="进入我的博客 →" data-en="Read My Blog →">进入我的博客 →</a>
   </div>
 </main>
 
 <footer data-zh="© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne" data-en="© 2026 Wu Jinqu · Powered by Hexo &amp; EdgeOne">© 2026 吴锦渠 · Powered by Hexo &amp; EdgeOne</footer>
 
 <script src="/js/lang.js"></script>
+<script>
+(function () {
+  var text = (localStorage.getItem('site-lang') === 'en') ? 'Welcome to My Blog' : '欢迎来到我的Blog';
+  var el = document.getElementById('typed');
+  var i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      setTimeout(type, 120);
+    } else {
+      document.querySelectorAll('.hero-fade').forEach(function (e) { e.classList.add('show'); });
+    }
+  }
+  type();
+})();
+</script>
 </body>
 </html>
