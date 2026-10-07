@@ -19,8 +19,8 @@
 
 <% if (page.total > 1) { %>
 <nav class="pager">
-  <% if (page.prev) { %><a class="card pager-btn" href="<%- url_for(page.prev_link) %>">← 上一页</a><% } %>
+  <% if (page.prev) { %><a class="card pager-btn" href="<%- url_for(page.prev_link) %>" data-zh="← 上一页" data-en="← Prev">← 上一页</a><% } %>
   <span class="pager-info"><%= page.current %> / <%= page.total %></span>
-  <% if (page.next) { %><a class="card pager-btn" href="<%- url_for(page.next_link) %>">下一页 →</a><% } %>
+  <% if (page.next) { %><a class="card pager-btn" href="<%- url_for(page.next_link) %>" data-zh="下一页 →" data-en="Next →">下一页 →</a><% } %>
 </nav>
 <% } %>
