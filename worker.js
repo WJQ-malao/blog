@@ -2,12 +2,18 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Decap CMS 点击登录后跳转到这里 → 带去 GitHub 授权页
+    // Decap CMS 点击登录后打开这里 → 先与后台握手（发送 authorizing:github），再跳 GitHub 授权页
     if (url.pathname === '/auth') {
-      const authUrl = 'https://github.com/login/oauth/authorize' +
+      const githubUrl = 'https://github.com/login/oauth/authorize' +
         '?client_id=' + env.CLIENT_ID +
         '&scope=repo';
-      return Response.redirect(authUrl, 302);
+      const html = '<!doctype html><html><body><script>(function(){' +
+        'var url = ' + JSON.stringify(githubUrl) + ';' +
+        'function send(){ try { if (window.opener && !window.opener.closed) { window.opener.postMessage("authorizing:github", "*"); } } catch (e) {} }' +
+        'send();' +
+        'setTimeout(function(){ send(); location.replace(url); }, 250);' +
+        '})();</script>正在跳转到 GitHub 授权……</body></html>';
+      return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
     // GitHub 授权完成后回调这里 → 用 code 换 token → 回传给 CMS
