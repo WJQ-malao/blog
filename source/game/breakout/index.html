@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打砖块 · WJQ Blog</title>
+<meta name="description" content="霓虹街机风打砖块">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #a5b4fc, #6366f1);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tip { font-size: 14px; color: #9d96b5; margin-bottom: 18px; }
+  canvas {
+    width: min(100%, 560px);
+    border-radius: 14px;
+    display: block;
+    margin: 0 auto;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>🧱 打砖块</h1>
+    <p class="tip">鼠标 / 触摸 / 方向键移动挡板，<b>空格 / 点击</b>发球</p>
+    <canvas id="game" width="640" height="480"></canvas>
+    <a class="back-btn" href="/game/">← 返回 GAME 主页</a>
+  </div>
+</main>
+
+<script>
+(function () {
+  var cv = document.getElementById('game');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+
+  var BG = '#0d1440', TEXT = '#c7d2fe';
+  var ROW_COLORS = ['#ff5c5c', '#ffb020', '#ffd54f', '#4ade80', '#38bdf8'];
+
+  var PADDLE = { w: 96, h: 12, x: W / 2 - 48, y: H - 34, speed: 8 };
+  var BALL_R = 7;
+  var COLS = 8, ROWS = 5, B_TOP = 60, B_SIDE = 40, B_GAP = 8;
+  var B_W = (W - B_SIDE * 2 - B_GAP * (COLS - 1)) / COLS;
+  var B_H = 22;
+
+  var bricks, ball, score, best, lives, level, ballSpeed;
+  var state; // ready | playing | over | win
+  var keys = {};
+  best = parseInt(localStorage.getItem('breakout-best') || '0', 10);
+
+  function buildBricks() {
+    bricks = [];
+    for (var r = 0; r < ROWS; r++)
+      for (var c = 0; c < COLS; c++)
+        bricks.push({ x: B_SIDE + c * (B_W + B_GAP), y: B_TOP + r * (B_H + B_GAP), color: ROW_COLORS[r], alive: true });
+  }
+
+  function resetBall() {
+    ball = { x: PADDLE.x + PADDLE.w / 2, y: PADDLE.y - BALL_R - 1, vx: 0, vy: 0 };
+    state = 'ready';
+  }
+
+  function newGame() {
+    score = 0; lives = 3; level = 1; ballSpeed = 4.2;
+    buildBricks();
+    resetBall();
+  }
+
+  function launch() {
+    if (state === 'over' || state === 'win') { newGame(); return; }
+    if (state !== 'ready') return;
+    var angle = -Math.PI / 2 + (Math.random() * 0.5 - 0.25);
+    ball.vx = Math.cos(angle) * ballSpeed;
+    ball.vy = Math.sin(angle) * ballSpeed;
+    state = 'playing';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    keys[e.code] = true;
+    if (e.code === 'Space') { e.preventDefault(); launch(); }
+  });
+  document.addEventListener('keyup', function (e) { keys[e.code] = false; });
+
+  function pointerX(clientX) {
+    var rect = cv.getBoundingClientRect();
+    var x = (clientX - rect.left) * (W / rect.width);
+    PADDLE.x = Math.max(0, Math.min(W - PADDLE.w, x - PADDLE.w / 2));
+  }
+  cv.addEventListener('mousemove', function (e) { pointerX(e.clientX); });
+  cv.addEventListener('mousedown', launch);
+  cv.addEventListener('touchstart', function (e) { e.preventDefault(); pointerX(e.touches[0].clientX); if (state !== 'playing') launch(); }, { passive: false });
+  cv.addEventListener('touchmove', function (e) { e.preventDefault(); pointerX(e.touches[0].clientX); }, { passive: false });
+
+  function die() {
+    lives--;
+    if (lives <= 0) {
+      state = 'over';
+      if (score > best) { best = score; localStorage.setItem('breakout-best', String(best)); }
+    } else {
+      resetBall();
+    }
+  }
+
+  function update() {
+    // 键盘移动
+    if (keys['ArrowLeft'] || keys['KeyA']) PADDLE.x = Math.max(0, PADDLE.x - PADDLE.speed);
+    if (keys['ArrowRight'] || keys['KeyD']) PADDLE.x = Math.min(W - PADDLE.w, PADDLE.x + PADDLE.speed);
+
+    if (state === 'ready') {
+      ball.x = PADDLE.x + PADDLE.w / 2;
+      ball.y = PADDLE.y - BALL_R - 1;
+      return;
+    }
+    if (state !== 'playing') return;
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // 墙壁
+    if (ball.x < BALL_R) { ball.x = BALL_R; ball.vx = -ball.vx; }
+    if (ball.x > W - BALL_R) { ball.x = W - BALL_R; ball.vx = -ball.vx; }
+    if (ball.y < BALL_R) { ball.y = BALL_R; ball.vy = -ball.vy; }
+    if (ball.y > H + BALL_R) return die();
+
+    // 挡板（按击中位置改变反弹角度）
+    if (ball.vy > 0 && ball.y + BALL_R >= PADDLE.y && ball.y + BALL_R <= PADDLE.y + PADDLE.h + 8 &&
+        ball.x >= PADDLE.x && ball.x <= PADDLE.x + PADDLE.w) {
+      var rel = (ball.x - (PADDLE.x + PADDLE.w / 2)) / (PADDLE.w / 2);
+      var angle = -Math.PI / 2 + rel * 1.1;
+      ball.vx = Math.cos(angle) * ballSpeed;
+      ball.vy = Math.sin(angle) * ballSpeed;
+      ball.y = PADDLE.y - BALL_R;
+    }
+
+    // 砖块
+    for (var i = 0; i < bricks.length; i++) {
+      var b = bricks[i];
+      if (!b.alive) continue;
+      if (ball.x + BALL_R > b.x && ball.x - BALL_R < b.x + B_W &&
+          ball.y + BALL_R > b.y && ball.y - BALL_R < b.y + B_H) {
+        b.alive = false;
+        score += 10;
+        // 按击中方向反弹
+        var overlapX = Math.min(ball.x + BALL_R - b.x, b.x + B_W - (ball.x - BALL_R));
+        var overlapY = Math.min(ball.y + BALL_R - b.y, b.y + B_H - (ball.y - BALL_R));
+        if (overlapX < overlapY) ball.vx = -ball.vx; else ball.vy = -ball.vy;
+        break;
+      }
+    }
+
+    // 过关
+    if (bricks.every(function (b) { return !b.alive; })) {
+      level++;
+      ballSpeed += 0.6;
+      score += 100;
+      buildBricks();
+      resetBall();
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    // 砖块（带发光）
+    bricks.forEach(function (b) {
+      if (!b.alive) return;
+      ctx.fillStyle = b.color;
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 12;
+      ctx.fillRect(b.x, b.y, B_W, B_H);
+      ctx.shadowBlur = 0;
+    });
+
+    // 挡板
+    ctx.fillStyle = '#a5b4fc';
+    ctx.shadowColor = '#818cf8';
+    ctx.shadowBlur = 14;
+    ctx.fillRect(PADDLE.x, PADDLE.y, PADDLE.w, PADDLE.h);
+    ctx.shadowBlur = 0;
+
+    // 球
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = '#fff';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // HUD
+    ctx.fillStyle = TEXT;
+    ctx.font = 'bold 15px Consolas, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('SCORE ' + score, 16, 28);
+    ctx.textAlign = 'center';
+    ctx.fillText('LEVEL ' + level, W / 2, 28);
+    ctx.textAlign = 'right';
+    ctx.fillText('BEST ' + best + '  ♥'.repeat(Math.max(lives, 0)), W - 16, 28);
+
+    if (state === 'ready') {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText('空格 / 点击 发球', W / 2, H / 2 + 40);
+    }
+    if (state === 'over') {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 30px sans-serif';
+      ctx.fillText('GAME OVER', W / 2, H / 2 - 14);
+      ctx.font = 'bold 17px sans-serif';
+      ctx.fillText('得分 ' + score + ' · 空格 / 点击 重新开始', W / 2, H / 2 + 20);
+    }
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  newGame();
+  loop();
+})();
+</script>
+
+</body>
+</html>

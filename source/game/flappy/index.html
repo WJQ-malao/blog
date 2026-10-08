@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>像素鸟 · WJQ Blog</title>
+<meta name="description" content="点击飞行过水管的像素鸟">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #bae6fd, #38bdf8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tip { font-size: 14px; color: #9d96b5; margin-bottom: 18px; }
+  canvas {
+    width: min(100%, 420px);
+    border-radius: 14px;
+    display: block;
+    margin: 0 auto;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>🐦 像素鸟</h1>
+    <p class="tip">按 <b>空格</b> 或 <b>点击画面</b> 扇动翅膀，穿过水管！</p>
+    <canvas id="game" width="480" height="600"></canvas>
+    <a class="back-btn" href="/game/">← 返回 GAME 主页</a>
+  </div>
+</main>
+
+<script>
+(function () {
+  var cv = document.getElementById('game');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+
+  var SKY = '#8fd0f0', PIPE = '#22c55e', PIPE_D = '#15803d', GROUND_C = '#d9b380', TEXT = '#0b3d54';
+
+  var GROUND = H - 60;
+  var BIRD = { x: 96, w: 36, h: 26, y: H / 2, vy: 0 };
+  var GRAVITY = 0.5, FLAP = -8.5;
+  var PIPE_W = 70, GAP = 165;
+
+  var pipes = [];
+  var spawnTimer = 0;
+  var speed = 3;
+  var frame = 0, score = 0, best = parseInt(localStorage.getItem('flappy-best') || '0', 10);
+  var running = false, over = false;
+
+  function reset() {
+    pipes = [];
+    spawnTimer = 0;
+    speed = 3;
+    frame = 0; score = 0;
+    BIRD.y = H / 2; BIRD.vy = 0;
+    over = false;
+  }
+
+  function flap() {
+    if (over) { reset(); running = true; return; }
+    if (!running) running = true;
+    BIRD.vy = FLAP;
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); flap(); }
+  });
+  cv.addEventListener('mousedown', flap);
+  cv.addEventListener('touchstart', function (e) { e.preventDefault(); flap(); }, { passive: false });
+
+  function spawnPipe() {
+    var minY = 60, maxY = GROUND - GAP - 60;
+    var topH = minY + Math.random() * (maxY - minY);
+    pipes.push({ x: W + 20, top: topH, bottom: topH + GAP, scored: false });
+  }
+
+  function hitPipe(p) {
+    var bx = BIRD.x, by = BIRD.y, bw = BIRD.w, bh = BIRD.h;
+    if (bx + bw < p.x || bx > p.x + PIPE_W) return false;
+    return by < p.top || by + bh > p.bottom;
+  }
+
+  function drawBird(x, y, flapUp) {
+    // 身体
+    ctx.fillStyle = '#ffd54f';
+    ctx.fillRect(x, y + 4, 28, 18);
+    // 头
+    ctx.fillRect(x + 16, y, 20, 16);
+    // 眼睛
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x + 26, y + 3, 7, 7);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(x + 29, y + 5, 4, 4);
+    // 喙
+    ctx.fillStyle = '#ff8f00';
+    ctx.fillRect(x + 34, y + 11, 8, 5);
+    // 翅膀
+    ctx.fillStyle = '#ffb300';
+    if (flapUp) ctx.fillRect(x + 4, y - 4, 14, 10);
+    else ctx.fillRect(x + 4, y + 16, 14, 10);
+  }
+
+  function drawPipe(p) {
+    ctx.fillStyle = PIPE;
+    // 上管
+    ctx.fillRect(p.x, 0, PIPE_W, p.top);
+    ctx.fillStyle = PIPE_D;
+    ctx.fillRect(p.x - 4, p.top - 24, PIPE_W + 8, 24);
+    // 下管
+    ctx.fillStyle = PIPE;
+    ctx.fillRect(p.x, p.bottom, PIPE_W, GROUND - p.bottom);
+    ctx.fillStyle = PIPE_D;
+    ctx.fillRect(p.x - 4, p.bottom, PIPE_W + 8, 24);
+  }
+
+  var clouds = [{ x: 60, y: 90 }, { x: 260, y: 150 }, { x: 400, y: 60 }];
+
+  function draw() {
+    // 天空
+    ctx.fillStyle = SKY;
+    ctx.fillRect(0, 0, W, H);
+    // 云
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    clouds.forEach(function (c) {
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 18, 0, Math.PI * 2);
+      ctx.arc(c.x + 18, c.y - 8, 14, 0, Math.PI * 2);
+      ctx.arc(c.x + 36, c.y, 16, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    // 水管
+    pipes.forEach(drawPipe);
+    // 地面
+    ctx.fillStyle = GROUND_C;
+    ctx.fillRect(0, GROUND, W, H - GROUND);
+    ctx.fillStyle = '#b8935e';
+    for (var i = 0; i < 8; i++) {
+      var px = (W - ((frame * speed + i * 80) % W)) % W;
+      ctx.fillRect(px, GROUND + 10, 30, 6);
+    }
+    // 鸟
+    drawBird(BIRD.x, BIRD.y, running && !over && BIRD.vy < 0);
+    // 分数
+    ctx.fillStyle = TEXT;
+    ctx.font = 'bold 26px Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(score, W / 2, 60);
+    ctx.font = 'bold 14px Consolas, monospace';
+    ctx.textAlign = 'right';
+    if (best > 0) ctx.fillText('BEST ' + best, W - 16, 30);
+
+    if (!running && !over) {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('按 空格 / 点击 起飞', W / 2, H / 2 + 80);
+    }
+    if (over) {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 30px sans-serif';
+      ctx.fillText('GAME OVER', W / 2, H / 2 - 20);
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('得分 ' + score + (score >= best && score > 0 ? '（新纪录！）' : ''), W / 2, H / 2 + 14);
+      ctx.fillText('按 空格 / 点击 重新开始', W / 2, H / 2 + 44);
+    }
+  }
+
+  function update() {
+    if (!running || over) return;
+    frame++;
+
+    // 云缓慢漂移
+    clouds.forEach(function (c) {
+      c.x -= 0.4;
+      if (c.x < -50) c.x = W + 40;
+    });
+
+    // 鸟物理
+    BIRD.vy += GRAVITY;
+    BIRD.y += BIRD.vy;
+
+    // 撞天/撞地
+    if (BIRD.y < 0 || BIRD.y + BIRD.h > GROUND) return die();
+
+    // 生成水管（按距离）
+    spawnTimer -= speed;
+    if (spawnTimer <= 0) {
+      spawnPipe();
+      spawnTimer = 190 + Math.random() * 60;
+    }
+
+    for (var i = pipes.length - 1; i >= 0; i--) {
+      pipes[i].x -= speed;
+      // 计分
+      if (!pipes[i].scored && pipes[i].x + PIPE_W < BIRD.x) {
+        pipes[i].scored = true;
+        score++;
+      }
+      if (pipes[i].x + PIPE_W < -30) pipes.splice(i, 1);
+      else if (hitPipe(pipes[i])) return die();
+    }
+
+    // 缓慢加速
+    if (frame % 600 === 0 && speed < 5.5) speed += 0.3;
+  }
+
+  function die() {
+    over = true;
+    running = false;
+    if (score > best) { best = score; localStorage.setItem('flappy-best', String(best)); }
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+
+</body>
+</html>
