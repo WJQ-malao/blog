@@ -21,5 +21,5 @@
     }
   });
 
-  apply(localStorage.getItem(KEY) || 'zh');
+  apply(localStorage.getItem(KEY) || 'en');
 })();
