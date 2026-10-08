@@ -32,8 +32,11 @@ export default {
       const token = data.access_token;
       const html = '<!doctype html><html><body><script>(function(){' +
         'var msg = "authorization:github:success:" + JSON.stringify({ token: ' + JSON.stringify(token) + ', provider: "github" });' +
-        'if (window.opener) { window.opener.postMessage(msg, "*"); }' +
-        '})();</script>授权成功，正在返回……</body></html>';
+        'function send(){ try { if (window.opener && !window.opener.closed) { window.opener.postMessage(msg, "*"); } } catch (e) {} }' +
+        'send();' +
+        'var n = 0, iv = setInterval(function(){ send(); if (++n >= 10) clearInterval(iv); }, 300);' +
+        'setTimeout(function(){ window.close(); }, 2500);' +
+        '})();</script>授权成功，正在返回……（若页面未自动关闭，请手动关闭后回到后台页面）</body></html>';
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
