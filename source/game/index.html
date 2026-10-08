@@ -125,16 +125,18 @@
   var BG = '#ffd54f', FG = '#111111';
 
   var GROUND = H - 50;
-  var DINO = { x: 60, w: 40, h: 44, y: GROUND - 44, vy: 0, jumping: false };
+  var DINO = { x: 60, w: 44, h: 47, y: GROUND - 47, vy: 0, jumping: false };
   var GRAVITY = 0.75, JUMP_V = -13.5;
 
   var obstacles = [];
+  var spawnTimer = 400; // 距离下一个障碍物还有多少像素
   var speed = 5.5;
   var frame = 0, score = 0, best = parseInt(localStorage.getItem('dino-best') || '0', 10);
   var running = false, over = false;
 
   function reset() {
     obstacles = [];
+    spawnTimer = 400;
     speed = 5.5;
     frame = 0; score = 0;
     DINO.y = GROUND - DINO.h; DINO.vy = 0; DINO.jumping = false;
@@ -166,25 +168,28 @@
 
   function drawDino(x, y, step) {
     ctx.fillStyle = FG;
+    // 尾巴（向后翘起）
+    ctx.fillRect(x, y + 20, 12, 7);
+    ctx.fillRect(x + 4, y + 27, 8, 6);
     // 身体
-    ctx.fillRect(x + 6, y + 10, 28, 24);
-    // 头
-    ctx.fillRect(x + 20, y, 20, 16);
-    // 嘴
-    ctx.fillRect(x + 34, y + 10, 8, 6);
+    ctx.fillRect(x + 10, y + 14, 22, 28);
+    // 大头
+    ctx.fillRect(x + 24, y, 20, 18);
+    // 嘴巴（前伸）
+    ctx.fillRect(x + 38, y + 10, 8, 8);
     // 眼睛（黄色镂空）
     ctx.fillStyle = BG;
-    ctx.fillRect(x + 32, y + 4, 5, 5);
+    ctx.fillRect(x + 36, y + 4, 5, 5);
     ctx.fillStyle = FG;
-    // 尾巴
-    ctx.fillRect(x, y + 16, 8, 8);
-    // 腿（跑动交替）
+    // 小短手
+    ctx.fillRect(x + 28, y + 28, 9, 4);
+    // 腿（跑动交替抬落）
     if (step) {
-      ctx.fillRect(x + 10, y + 34, 8, 10);
-      ctx.fillRect(x + 24, y + 34, 8, 6);
+      ctx.fillRect(x + 13, y + 42, 8, 5);
+      ctx.fillRect(x + 27, y + 38, 8, 9);
     } else {
-      ctx.fillRect(x + 10, y + 34, 8, 6);
-      ctx.fillRect(x + 24, y + 34, 8, 10);
+      ctx.fillRect(x + 13, y + 38, 8, 9);
+      ctx.fillRect(x + 27, y + 42, 8, 5);
     }
   }
 
@@ -252,9 +257,12 @@
       DINO.jumping = false;
     }
 
-    // 生成障碍
-    var interval = Math.max(50, 95 - speed * 3);
-    if (frame % Math.floor(interval + Math.random() * 40) === 0) spawn();
+    // 生成障碍（按像素距离控制，保证最小间距，速度越快间距越大）
+    spawnTimer -= speed;
+    if (spawnTimer <= 0) {
+      spawn();
+      spawnTimer = 280 + speed * 30 + Math.random() * 280;
+    }
 
     // 移动 + 碰撞
     for (var i = obstacles.length - 1; i >= 0; i--) {
