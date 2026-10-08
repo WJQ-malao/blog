@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贪吃蛇 · WJQ Blog</title>
+<meta name="description" content="复古掌机风贪吃蛇">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #a7f3d0, #4ade80);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tip { font-size: 14px; color: #9d96b5; margin-bottom: 18px; }
+  canvas {
+    width: min(100%, 440px);
+    border-radius: 14px;
+    display: block;
+    margin: 0 auto;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>🐍 贪吃蛇</h1>
+    <p class="tip">方向键 / WASD 移动，手机<b>滑动屏幕</b>控制</p>
+    <canvas id="game" width="480" height="480"></canvas>
+    <a class="back-btn" href="/game/">← 返回 GAME 主页</a>
+  </div>
+</main>
+
+<script>
+(function () {
+  var cv = document.getElementById('game');
+  var ctx = cv.getContext('2d');
+  var N = 24, CELL = 20, W = N * CELL;
+
+  var BG = '#0d2818', GRID = 'rgba(74,222,128,.07)';
+  var SNAKE = '#4ade80', HEAD = '#a7f3d0', FOOD = '#ff5c5c', TEXT = '#d1fae5';
+
+  var snake, dir, pending, food, score, best, speed, acc, last, over, started;
+  best = parseInt(localStorage.getItem('snake-best') || '0', 10);
+
+  function reset() {
+    snake = [{ x: 8, y: 12 }, { x: 7, y: 12 }, { x: 6, y: 12 }];
+    dir = { x: 1, y: 0 };
+    pending = null;
+    score = 0;
+    speed = 130;
+    over = false;
+    started = false;
+    placeFood();
+  }
+
+  function placeFood() {
+    while (true) {
+      var f = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) };
+      if (!snake.some(function (s) { return s.x === f.x && s.y === f.y; })) { food = f; return; }
+    }
+  }
+
+  function setDir(x, y) {
+    if (over) { reset(); started = true; return; }
+    if (!started) started = true;
+    // 禁止 180 度掉头（基于当前方向，而非待转方向）
+    if (x === -dir.x && y === -dir.y) return;
+    pending = { x: x, y: y };
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.code;
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].indexOf(k) >= 0) e.preventDefault();
+    if (k === 'ArrowUp' || k === 'KeyW') setDir(0, -1);
+    else if (k === 'ArrowDown' || k === 'KeyS') setDir(0, 1);
+    else if (k === 'ArrowLeft' || k === 'KeyA') setDir(-1, 0);
+    else if (k === 'ArrowRight' || k === 'KeyD') setDir(1, 0);
+    else if (k === 'Space') { if (over) { reset(); started = true; } else started = true; }
+  });
+
+  // 触屏滑动
+  var tx = 0, ty = 0;
+  cv.addEventListener('touchstart', function (e) {
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+    if (over) { reset(); started = true; }
+  }, { passive: true });
+  cv.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+  cv.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) < 24 && Math.abs(dy) < 24) { started = true; return; }
+    if (Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 1 : -1, 0);
+    else setDir(0, dy > 0 ? 1 : -1);
+  });
+
+  function step() {
+    if (pending) { dir = pending; pending = null; }
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+    // 撞墙或撞自己
+    if (head.x < 0 || head.y < 0 || head.x >= N || head.y >= N ||
+        snake.some(function (s) { return s.x === head.x && s.y === head.y; })) {
+      over = true;
+      if (score > best) { best = score; localStorage.setItem('snake-best', String(best)); }
+      return;
+    }
+
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      if (speed > 70) speed -= 3;
+      placeFood();
+    } else {
+      snake.pop();
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, W);
+
+    // 网格
+    ctx.strokeStyle = GRID;
+    ctx.lineWidth = 1;
+    for (var i = 1; i < N; i++) {
+      ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, W); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(W, i * CELL); ctx.stroke();
+    }
+
+    // 食物（脉动）
+    var pulse = 3 + Math.sin(Date.now() / 200) * 1.5;
+    ctx.fillStyle = FOOD;
+    ctx.beginPath();
+    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - pulse, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 蛇
+    snake.forEach(function (s, i) {
+      ctx.fillStyle = i === 0 ? HEAD : SNAKE;
+      var pad = i === 0 ? 1 : 2;
+      ctx.fillRect(s.x * CELL + pad, s.y * CELL + pad, CELL - pad * 2, CELL - pad * 2);
+    });
+    // 蛇眼
+    if (snake.length) {
+      ctx.fillStyle = BG;
+      var h = snake[0];
+      var ex = h.x * CELL + CELL / 2 + dir.x * 4;
+      var ey = h.y * CELL + CELL / 2 + dir.y * 4;
+      ctx.fillRect(ex - 4, ey - 4, 4, 4);
+      ctx.fillRect(ex + 1, ey + (dir.y !== 0 ? 1 : -4), 4, 4);
+    }
+
+    // 分数
+    ctx.fillStyle = TEXT;
+    ctx.font = 'bold 16px Consolas, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('SCORE ' + score, 12, 24);
+    ctx.textAlign = 'right';
+    if (best > 0) ctx.fillText('BEST ' + best, W - 12, 24);
+
+    if (!started && !over) {
+      ctx.textAlign = 'center';
+      ctx.fillStyle = TEXT;
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('按 方向键 / 滑动 开始', W / 2, W / 2);
+    }
+    if (over) {
+      ctx.fillStyle = 'rgba(13,40,24,.8)';
+      ctx.fillRect(0, 0, W, W);
+      ctx.fillStyle = TEXT;
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 30px sans-serif';
+      ctx.fillText('GAME OVER', W / 2, W / 2 - 24);
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('得分 ' + score + (score >= best && score > 0 ? '（新纪录！）' : ''), W / 2, W / 2 + 10);
+      ctx.fillText('按 空格 / 点击 重新开始', W / 2, W / 2 + 42);
+    }
+  }
+
+  function loop(t) {
+    if (!last) last = t;
+    acc += t - last;
+    last = t;
+    if (started && !over && acc > speed) { step(); acc = 0; }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  reset();
+  acc = 0; last = 0;
+  requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
