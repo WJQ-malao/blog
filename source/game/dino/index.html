@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恐龙跑酷 · WJQ Blog</title>
+<meta name="description" content="休息一下，玩会儿恐龙跑酷">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #e9e4fb, #c4b5fd);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tip { font-size: 14px; color: #9d96b5; margin-bottom: 18px; }
+  canvas {
+    width: 100%;
+    border-radius: 14px;
+    display: block;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>🦕 恐龙跑酷</h1>
+    <p class="tip">按 <b>空格</b> 或 <b>点击画面</b> 跳跃，躲开仙人掌和翼龙！</p>
+    <canvas id="game" width="800" height="300"></canvas>
+    <a class="back-btn" href="/game/">← 返回 GAME 主页</a>
+  </div>
+</main>
+
+<script>
+(function () {
+  var cv = document.getElementById('game');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  var BG = '#ffd54f', FG = '#111111';
+
+  var GROUND = H - 50;
+  var DINO = { x: 60, w: 44, h: 47, y: GROUND - 47, vy: 0, jumping: false };
+  var GRAVITY = 0.75, JUMP_V = -13.5;
+
+  var obstacles = [];
+  var spawnTimer = 400; // 距离下一个障碍物还有多少像素
+  var speed = 5.5;
+  var frame = 0, score = 0, best = parseInt(localStorage.getItem('dino-best') || '0', 10);
+  var running = false, over = false;
+
+  function reset() {
+    obstacles = [];
+    spawnTimer = 400;
+    speed = 5.5;
+    frame = 0; score = 0;
+    DINO.y = GROUND - DINO.h; DINO.vy = 0; DINO.jumping = false;
+    over = false;
+  }
+
+  function jump() {
+    if (over) { reset(); return; }
+    if (!running) { running = true; return; }
+    if (!DINO.jumping) { DINO.vy = JUMP_V; DINO.jumping = true; }
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
+  });
+  cv.addEventListener('mousedown', jump);
+  cv.addEventListener('touchstart', function (e) { e.preventDefault(); jump(); }, { passive: false });
+
+  function spawn() {
+    // 速度起来后，25% 概率刷翼龙
+    if (speed > 7 && Math.random() < 0.25) return spawnBird();
+    var r = Math.random();
+    if (r < 0.45) {
+      // 单柱
+      var h = 30 + Math.random() * 26;
+      var w = 16 + Math.random() * 10;
+      obstacles.push({ type: 'cactus', x: W + 20, w: w, h: h, y: GROUND - h, parts: 1 });
+    } else {
+      // 双柱 / 三柱组合
+      var n = r < 0.78 ? 2 : 3;
+      var h2 = 26 + Math.random() * 22;
+      var w2 = 14 + Math.random() * 8;
+      obstacles.push({ type: 'cactus', x: W + 20, w: n * (w2 + 6) - 6, h: h2, y: GROUND - h2, parts: n, pw: w2 });
+    }
+  }
+
+  function spawnBird() {
+    var ys = [GROUND - 75, GROUND - 48, GROUND - 16]; // 高 / 中 / 低
+    obstacles.push({ type: 'bird', x: W + 20, w: 44, h: 24, y: ys[Math.floor(Math.random() * ys.length)] });
+  }
+
+  function hit(o) {
+    return DINO.x < o.x + o.w && DINO.x + DINO.w > o.x &&
+           DINO.y < o.y + o.h && DINO.y + DINO.h > o.y;
+  }
+
+  function drawDino(x, y, step) {
+    ctx.fillStyle = FG;
+    // 尾巴（向后翘起）
+    ctx.fillRect(x, y + 20, 12, 7);
+    ctx.fillRect(x + 4, y + 27, 8, 6);
+    // 身体
+    ctx.fillRect(x + 10, y + 14, 22, 28);
+    // 大头
+    ctx.fillRect(x + 24, y, 20, 18);
+    // 嘴巴（前伸）
+    ctx.fillRect(x + 38, y + 10, 8, 8);
+    // 眼睛（黄色镂空）
+    ctx.fillStyle = BG;
+    ctx.fillRect(x + 36, y + 4, 5, 5);
+    ctx.fillStyle = FG;
+    // 小短手
+    ctx.fillRect(x + 28, y + 28, 9, 4);
+    // 腿（跑动交替抬落）
+    if (step) {
+      ctx.fillRect(x + 13, y + 42, 8, 5);
+      ctx.fillRect(x + 27, y + 38, 8, 9);
+    } else {
+      ctx.fillRect(x + 13, y + 38, 8, 9);
+      ctx.fillRect(x + 27, y + 42, 8, 5);
+    }
+  }
+
+  function drawCactus(o) {
+    ctx.fillStyle = FG;
+    var pw = o.pw || o.w;
+    for (var i = 0; i < (o.parts || 1); i++) {
+      var px = o.x + i * (pw + 6);
+      ctx.fillRect(px, o.y, pw, o.h);
+      // 手臂
+      ctx.fillRect(px - 5, o.y + 8, 5, 4);
+      ctx.fillRect(px + pw, o.y + 14, 5, 4);
+    }
+  }
+
+  function drawBird(o) {
+    ctx.fillStyle = FG;
+    // 身体
+    ctx.fillRect(o.x + 8, o.y + 8, 26, 10);
+    // 头和喙
+    ctx.fillRect(o.x + 30, o.y + 4, 12, 8);
+    // 翅膀（上下扇动）
+    if (Math.floor(frame / 9) % 2 === 0) {
+      ctx.fillRect(o.x + 14, o.y - 4, 12, 12);
+    } else {
+      ctx.fillRect(o.x + 14, o.y + 14, 12, 10);
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    // 地面
+    ctx.strokeStyle = FG;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND + 1);
+    ctx.lineTo(W, GROUND + 1);
+    ctx.stroke();
+
+    // 地面小石子
+    ctx.fillStyle = 'rgba(17,17,17,.35)';
+    for (var i = 0; i < 6; i++) {
+      var px = (W - ((frame * speed * 0.6 + i * 160) % W)) % W;
+      ctx.fillRect(px, GROUND + 14, 14, 3);
+    }
+
+    obstacles.forEach(function (o) {
+      if (o.type === 'bird') drawBird(o); else drawCactus(o);
+    });
+    drawDino(DINO.x, DINO.y, Math.floor(frame / 8) % 2 === 0);
+
+    // 分数
+    ctx.fillStyle = FG;
+    ctx.font = 'bold 18px Consolas, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('SCORE ' + score, W - 20, 34);
+    if (best > 0) ctx.fillText('BEST ' + best, W - 20, 58);
+
+    if (!running && !over) {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('按 空格 / 点击 开始', W / 2, H / 2 - 20);
+    }
+    if (over) {
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 30px sans-serif';
+      ctx.fillText('GAME OVER', W / 2, H / 2 - 30);
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('按 空格 / 点击 重新开始', W / 2, H / 2 + 6);
+    }
+  }
+
+  function update() {
+    if (!running || over) return;
+    frame++;
+
+    // 恐龙物理
+    DINO.vy += GRAVITY;
+    DINO.y += DINO.vy;
+    if (DINO.y >= GROUND - DINO.h) {
+      DINO.y = GROUND - DINO.h;
+      DINO.vy = 0;
+      DINO.jumping = false;
+    }
+
+    // 生成障碍（按像素距离控制，保证最小间距，速度越快间距越大）
+    spawnTimer -= speed;
+    if (spawnTimer <= 0) {
+      spawn();
+      spawnTimer = 280 + speed * 30 + Math.random() * 280;
+    }
+
+    // 移动 + 碰撞
+    for (var i = obstacles.length - 1; i >= 0; i--) {
+      obstacles[i].x -= speed;
+      if (obstacles[i].x + obstacles[i].w < -20) obstacles.splice(i, 1);
+      else if (hit(obstacles[i])) {
+        over = true;
+        running = false;
+        if (score > best) { best = score; localStorage.setItem('dino-best', String(best)); }
+      }
+    }
+
+    // 计分 + 加速
+    if (frame % 5 === 0) score++;
+    if (frame % 500 === 0 && speed < 13) speed += 0.5;
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+
+</body>
+</html>
