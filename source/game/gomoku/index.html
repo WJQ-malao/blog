@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五子棋 · WJQ Blog</title>
+<meta name="description" content="本地双人五子棋">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #fcd9a8, #d97706);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .status {
+    font-size: 16px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    color: #fcd9a8;
+  }
+  .status .stone {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    vertical-align: -2px;
+    margin: 0 4px;
+  }
+  canvas {
+    width: min(100%, 480px);
+    border-radius: 14px;
+    display: block;
+    margin: 0 auto;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+  }
+  .actions { margin-top: 20px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>⚫ 五子棋</h1>
+    <div class="status" id="status">轮到 <span class="stone" style="background:#111"></span> 黑棋</div>
+    <canvas id="game" width="520" height="520"></canvas>
+    <div class="actions">
+      <button class="btn" onclick="newGame()">新对局</button>
+      <button class="btn" onclick="undo()">悔棋</button>
+      <a class="btn" href="/game/">← 返回 GAME 主页</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  var cv = document.getElementById('game');
+  var ctx = cv.getContext('2d');
+  var N = 15, W = cv.width;
+  var PAD = 26, CELL = (W - PAD * 2) / (N - 1);
+  var WOOD = '#e3b873', LINE = '#8a5a2b';
+
+  var board, current, over, winLine, history;
+
+  function newGame() {
+    board = [];
+    for (var i = 0; i < N; i++) board.push(new Array(N).fill(0));
+    current = 1; // 1 黑 2 白
+    over = false;
+    winLine = null;
+    history = [];
+    setStatus('轮到 <span class="stone" style="background:#111"></span> 黑棋');
+    draw();
+  }
+  window.newGame = newGame;
+
+  function setStatus(html) {
+    document.getElementById('status').innerHTML = html;
+  }
+
+  function draw() {
+    // 木纹底
+    ctx.fillStyle = WOOD;
+    ctx.fillRect(0, 0, W, W);
+    // 线
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 1.2;
+    for (var i = 0; i < N; i++) {
+      ctx.beginPath(); ctx.moveTo(PAD, PAD + i * CELL); ctx.lineTo(W - PAD, PAD + i * CELL); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(PAD + i * CELL, PAD); ctx.lineTo(PAD + i * CELL, W - PAD); ctx.stroke();
+    }
+    // 星位
+    [3, 7, 11].forEach(function (r) {
+      [3, 7, 11].forEach(function (c) {
+        ctx.fillStyle = LINE;
+        ctx.beginPath();
+        ctx.arc(PAD + c * CELL, PAD + r * CELL, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+    // 棋子
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
+      if (!board[r][c]) continue;
+      var x = PAD + c * CELL, y = PAD + r * CELL;
+      ctx.beginPath();
+      ctx.arc(x, y, CELL * 0.42, 0, Math.PI * 2);
+      ctx.fillStyle = board[r][c] === 1 ? '#1a1a1a' : '#f5f5f5';
+      ctx.fill();
+      ctx.strokeStyle = board[r][c] === 1 ? '#000' : '#bbb';
+      ctx.stroke();
+    }
+    // 最后一手标记
+    if (history.length) {
+      var last = history[history.length - 1];
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(PAD + last.c * CELL - CELL * 0.5, PAD + last.r * CELL - CELL * 0.5, CELL, CELL);
+      ctx.lineWidth = 1.2;
+    }
+    // 胜利连线
+    if (winLine) {
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(PAD + winLine[0].c * CELL, PAD + winLine[0].r * CELL);
+      ctx.lineTo(PAD + winLine[1].c * CELL, PAD + winLine[1].r * CELL);
+      ctx.stroke();
+      ctx.lineWidth = 1.2;
+    }
+  }
+
+  function checkWin(r, c, color) {
+    var dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
+    for (var d = 0; d < dirs.length; d++) {
+      var dr = dirs[d][0], dc = dirs[d][1];
+      var line = [{ r: r, c: c }];
+      for (var s = 1; s < 5; s++) {
+        var nr = r + dr * s, nc = c + dc * s;
+        if (nr < 0 || nr >= N || nc < 0 || nc >= N || board[nr][nc] !== color) break;
+        line.push({ r: nr, c: nc });
+      }
+      for (var s2 = 1; s2 < 5; s2++) {
+        var nr2 = r - dr * s2, nc2 = c - dc * s2;
+        if (nr2 < 0 || nr2 >= N || nc2 < 0 || nc2 >= N || board[nr2][nc2] !== color) break;
+        line.unshift({ r: nr2, c: nc2 });
+      }
+      if (line.length >= 5) return [line[0], line[line.length - 1]];
+    }
+    return null;
+  }
+
+  function place(e) {
+    if (over) return;
+    var rect = cv.getBoundingClientRect();
+    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    var x = (clientX - rect.left) * (W / rect.width);
+    var y = (clientY - rect.top) * (W / rect.width);
+    var c = Math.round((x - PAD) / CELL);
+    var r = Math.round((y - PAD) / CELL);
+    if (r < 0 || r >= N || c < 0 || c >= N || board[r][c]) return;
+
+    board[r][c] = current;
+    history.push({ r: r, c: c, color: current });
+
+    var wl = checkWin(r, c, current);
+    if (wl) {
+      over = true;
+      winLine = wl;
+      setStatus((current === 1 ? '<span class="stone" style="background:#111"></span> 黑棋' : '<span class="stone" style="background:#f5f5f5;border:1px solid #bbb"></span> 白棋') + ' 获胜 🎉');
+    } else {
+      current = 3 - current;
+      setStatus('轮到 ' + (current === 1 ? '<span class="stone" style="background:#111"></span> 黑棋' : '<span class="stone" style="background:#f5f5f5;border:1px solid #bbb"></span> 白棋'));
+    }
+    draw();
+  }
+
+  function undo() {
+    if (!history.length) return;
+    var last = history.pop();
+    board[last.r][last.c] = 0;
+    current = last.color;
+    over = false;
+    winLine = null;
+    setStatus('轮到 ' + (current === 1 ? '<span class="stone" style="background:#111"></span> 黑棋' : '<span class="stone" style="background:#f5f5f5;border:1px solid #bbb"></span> 白棋'));
+    draw();
+  }
+  window.undo = undo;
+
+  cv.addEventListener('click', place);
+  cv.addEventListener('touchstart', function (e) { e.preventDefault(); place(e); }, { passive: false });
+
+  newGame();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>扫雷 · WJQ Blog</title>
+<meta name="description" content="经典扫雷游戏">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: #e8e6f0;
+    background: linear-gradient(135deg, #150829 0%, #241040 45%, #31135c 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { width: 480px; height: 480px; background: rgba(124, 77, 255, .28); top: -120px; right: -80px; }
+  body::after  { width: 420px; height: 420px; background: rgba(0, 229, 255, .14); bottom: -140px; left: -100px; }
+
+  nav {
+    position: relative;
+    z-index: 2;
+    width: min(880px, calc(100% - 48px));
+    margin: 22px auto 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(167, 139, 250, .6); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a { color: #b8b3cc; text-decoration: none; font-size: 15px; transition: color .2s; }
+  .nav-links a:hover { color: #c4b5fd; }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: min(880px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 56px;
+  }
+  .game-card {
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #cbd5e1, #94a3b8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tip { font-size: 14px; color: #9d96b5; margin-bottom: 18px; }
+
+  .hud {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 16px;
+    font-family: Consolas, monospace;
+  }
+  .hud .counter { font-size: 20px; font-weight: 700; color: #ffd54f; min-width: 70px; }
+  .face {
+    font-size: 26px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 3px;
+    width: min(100%, 396px);
+    margin: 0 auto;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    padding: 6px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: clamp(14px, 2.6vw, 19px);
+    border-radius: 6px;
+    background: #3f3f5c;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .cell:hover:not(.open) { background: #4c4c6e; }
+  .cell.open { background: #23233a; cursor: default; }
+  .cell.mine { background: #7f1d1d; }
+  .cell.flag { cursor: pointer; }
+  .n1 { color: #60a5fa; } .n2 { color: #4ade80; } .n3 { color: #f87171; } .n4 { color: #c084fc; }
+  .n5 { color: #fbbf24; } .n6 { color: #2dd4bf; } .n7 { color: #f472b6; } .n8 { color: #e5e7eb; }
+
+  .actions { margin-top: 20px; }
+  .back-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .back-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+
+  @media (max-width: 760px) {
+    nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
+    .brand img { width: 32px; height: 32px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { font-size: 13.5px; }
+    .game-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">
+    <img src="/img/avatar.jpg" alt="头像">
+  </a>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/blog/">博客</a>
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
+    <a href="/game/">GAME</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="game-card">
+    <h1>💣 扫雷</h1>
+    <p class="tip">左键翻开 · 右键 / 长按插旗 · 9×9 共 10 颗雷</p>
+    <div class="hud">
+      <div class="counter" id="mineCount">💣 10</div>
+      <button class="face" id="face" onclick="newGame()">🙂</button>
+      <div class="counter" id="timer">⏱ 0</div>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="actions">
+      <a class="back-btn" href="/game/">← 返回 GAME 主页</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  var N = 9, MINES = 10;
+  var cells, revealed, flagged, mineMap, started, over, win, flags, seconds, timerId;
+  var boardEl = document.getElementById('board');
+  var faceEl = document.getElementById('face');
+
+  function newGame() {
+    cells = []; revealed = []; flagged = []; mineMap = [];
+    for (var i = 0; i < N * N; i++) { cells.push(0); revealed.push(false); flagged.push(false); mineMap.push(false); }
+    // 布雷
+    var placed = 0;
+    while (placed < MINES) {
+      var p = Math.floor(Math.random() * N * N);
+      if (!mineMap[p]) { mineMap[p] = true; placed++; }
+    }
+    // 算数字
+    for (var j = 0; j < N * N; j++) cells[j] = countAround(j);
+    started = false; over = false; win = false; flags = 0; seconds = 0;
+    clearInterval(timerId);
+    document.getElementById('timer').textContent = '⏱ 0';
+    faceEl.textContent = '🙂';
+    render();
+  }
+  window.newGame = newGame;
+
+  function neighbors(i) {
+    var r = Math.floor(i / N), c = i % N, res = [];
+    for (var dr = -1; dr <= 1; dr++) for (var dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue;
+      var nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N) res.push(nr * N + nc);
+    }
+    return res;
+  }
+
+  function countAround(i) {
+    return neighbors(i).filter(function (n) { return mineMap[n]; }).length;
+  }
+
+  function startTimer() {
+    timerId = setInterval(function () {
+      seconds++;
+      document.getElementById('timer').textContent = '⏱ ' + seconds;
+    }, 1000);
+  }
+
+  function reveal(i) {
+    if (over || revealed[i] || flagged[i]) return;
+    if (!started) { started = true; startTimer(); }
+    revealed[i] = true;
+    if (mineMap[i]) {
+      over = true;
+      clearInterval(timerId);
+      faceEl.textContent = '😵';
+      // 显示所有雷
+      for (var j = 0; j < N * N; j++) if (mineMap[j]) revealed[j] = true;
+      render();
+      return;
+    }
+    if (cells[i] === 0) {
+      neighbors(i).forEach(function (n) { if (!revealed[n]) reveal(n); });
+    }
+    checkWin();
+    render();
+  }
+
+  function toggleFlag(i) {
+    if (over || revealed[i]) return;
+    flagged[i] = !flagged[i];
+    flags += flagged[i] ? 1 : -1;
+    render();
+  }
+
+  function checkWin() {
+    for (var i = 0; i < N * N; i++) {
+      if (!mineMap[i] && !revealed[i]) return;
+    }
+    over = true; win = true;
+    clearInterval(timerId);
+    faceEl.textContent = '😎';
+  }
+
+  function render() {
+    document.getElementById('mineCount').textContent = '💣 ' + (MINES - flags);
+    boardEl.innerHTML = '';
+    for (var i = 0; i < N * N; i++) {
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.dataset.i = i;
+      if (revealed[i]) {
+        d.classList.add('open');
+        if (mineMap[i]) { d.classList.add('mine'); d.textContent = '💣'; }
+        else if (cells[i] > 0) { d.textContent = cells[i]; d.classList.add('n' + cells[i]); }
+      } else if (flagged[i]) {
+        d.classList.add('flag');
+        d.textContent = '🚩';
+      }
+      boardEl.appendChild(d);
+    }
+  }
+
+  boardEl.addEventListener('click', function (e) {
+    var c = e.target.closest('.cell');
+    if (c) reveal(parseInt(c.dataset.i, 10));
+  });
+  boardEl.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    var c = e.target.closest('.cell');
+    if (c) toggleFlag(parseInt(c.dataset.i, 10));
+  });
+  // 手机长按插旗
+  var pressTimer = null;
+  boardEl.addEventListener('touchstart', function (e) {
+    var c = e.target.closest('.cell');
+    if (!c) return;
+    pressTimer = setTimeout(function () { toggleFlag(parseInt(c.dataset.i, 10)); pressTimer = null; }, 400);
+  }, { passive: true });
+  boardEl.addEventListener('touchend', function () {
+    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+  });
+
+  newGame();
+})();
+</script>
+
+</body>
+</html>
