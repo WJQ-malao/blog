@@ -142,7 +142,8 @@
   var BG = '#0d2818', GRID = 'rgba(74,222,128,.07)';
   var SNAKE = '#4ade80', HEAD = '#a7f3d0', FOOD = '#ff5c5c', TEXT = '#d1fae5';
 
-  var snake, dir, pending, food, score, best, speed, acc, last, over, started;
+  var snake, dir, pending, foods, score, best, speed, acc, last, over, started;
+  var FOOD_COUNT = 3; // 场上同时存在的果子数
   best = parseInt(localStorage.getItem('snake-best') || '0', 10);
 
   function reset() {
@@ -153,13 +154,16 @@
     speed = 150;
     over = false;
     started = false;
-    placeFood();
+    foods = [];
+    while (foods.length < FOOD_COUNT) placeFood();
   }
 
   function placeFood() {
     while (true) {
       var f = { x: Math.floor(Math.random() * N), y: Math.floor(Math.random() * N) };
-      if (!snake.some(function (s) { return s.x === f.x && s.y === f.y; })) { food = f; return; }
+      var onSnake = snake.some(function (s) { return s.x === f.x && s.y === f.y; });
+      var onFood = foods.some(function (o) { return o.x === f.x && o.y === f.y; });
+      if (!onSnake && !onFood) { foods.push(f); return; }
     }
   }
 
@@ -209,7 +213,12 @@
     }
 
     snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) {
+    var eatenIdx = -1;
+    for (var fi = 0; fi < foods.length; fi++) {
+      if (head.x === foods[fi].x && head.y === foods[fi].y) { eatenIdx = fi; break; }
+    }
+    if (eatenIdx >= 0) {
+      foods.splice(eatenIdx, 1);
       score++;
       if (speed > 80) speed -= 2;
       placeFood();
@@ -233,9 +242,11 @@
     // 食物（脉动）
     var pulse = 3 + Math.sin(Date.now() / 200) * 1.5;
     ctx.fillStyle = FOOD;
-    ctx.beginPath();
-    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - pulse, 0, Math.PI * 2);
-    ctx.fill();
+    foods.forEach(function (f) {
+      ctx.beginPath();
+      ctx.arc(f.x * CELL + CELL / 2, f.y * CELL + CELL / 2, CELL / 2 - pulse, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
     // 蛇
     snake.forEach(function (s, i) {
