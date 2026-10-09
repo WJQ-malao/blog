@@ -1,26 +1,12 @@
-<section class="post-list">
-<% page.posts.each(function (post) { %>
-  <a class="card post-card" href="<%- url_for(post.path) %>">
-    <h2><%= post.title %></h2>
-    <div class="meta">
-      <span><%= date(post.date, 'YYYY-MM-DD') %></span>
-      <% if (post.categories && post.categories.length) { %>
-        <span class="dot">·</span>
-        <% post.categories.each(function (c) { %><span class="cat"><%= c.name %></span><% }) %>
-      <% } %>
-      <% if (post.tags && post.tags.length) { %>
-        <% post.tags.each(function (t) { %><span class="tag">#<%= t.name %></span><% }) %>
-      <% } %>
-    </div>
-    <p class="excerpt"><%= post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().substring(0, 120) %>…</p>
-  </a>
-<% }) %>
+<div class="list-toolbar">
+  <input type="search" id="postSearch" class="search-input" placeholder="搜索文章…">
+  <button class="sort-btn" id="sortBtn"></button>
+</div>
+
+<section class="post-list" id="postList">
+  <p class="loading">加载中…</p>
 </section>
 
-<% if (page.total > 1) { %>
-<nav class="pager">
-  <% if (page.prev) { %><a class="card pager-btn" href="<%- url_for(page.prev_link) %>" data-zh="← 上一页" data-en="← Prev">← 上一页</a><% } %>
-  <span class="pager-info"><%= page.current %> / <%= page.total %></span>
-  <% if (page.next) { %><a class="card pager-btn" href="<%- url_for(page.next_link) %>" data-zh="下一页 →" data-en="Next →">下一页 →</a><% } %>
-</nav>
-<% } %>
+<nav class="pager" id="pager"></nav>
+
+<%- js('js/blog') %>

@@ -70,6 +70,38 @@ nav {
   transition: transform .2s, border-color .2s, box-shadow .2s;
 }
 
+/* 博客列表工具栏（搜索 + 排序） */
+.list-toolbar { display: flex; gap: 12px; margin-bottom: 20px; }
+.search-input {
+  flex: 1;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  padding: 10px 20px;
+  color: #e8e6f0;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s;
+}
+.search-input:focus { border-color: rgba(167, 139, 250, .55); }
+.search-input::placeholder { color: #7d7696; }
+.sort-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #c4b5fd;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .2s, box-shadow .2s;
+}
+.sort-btn:hover { border-color: rgba(167, 139, 250, .55); box-shadow: 0 6px 20px rgba(139, 92, 246, .25); }
+.loading, .empty-tip { text-align: center; color: #9d96b5; padding: 40px 0; }
+
 /* 文章列表 */
 .post-list { display: flex; flex-direction: column; gap: 20px; }
 .post-card { padding: 26px 30px; text-decoration: none; color: inherit; }
