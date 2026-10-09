@@ -7,6 +7,7 @@
   --card-bg: rgba(255, 255, 255, .06); --card-border: rgba(255, 255, 255, .10);
   --code-bg: #10081f; --code-text: #e9d5ff; --tag: #67e8f9;
   --shadow: rgba(139, 92, 246, .45);
+  --panel-bg: #2a1650;
 }
 html[data-theme="blue"] {
   --bg1: #0b1d3a; --bg2: #12294d; --bg3: #1b3a66;
@@ -16,6 +17,7 @@ html[data-theme="blue"] {
   --card-bg: rgba(255, 255, 255, .06); --card-border: rgba(255, 255, 255, .10);
   --code-bg: #0a1830; --code-text: #d6e6ff; --tag: #67e8f9;
   --shadow: rgba(79, 143, 247, .45);
+  --panel-bg: #132c56;
 }
 html[data-theme="light"] {
   --bg1: #f2f4fa; --bg2: #e9edf6; --bg3: #dfe6f3;
@@ -25,18 +27,17 @@ html[data-theme="light"] {
   --card-bg: rgba(255, 255, 255, .72); --card-border: rgba(30, 27, 75, .10);
   --code-bg: #eae6f7; --code-text: #4c1d95; --tag: #0891b2;
   --shadow: rgba(124, 58, 237, .25);
+  --panel-bg: #ffffff;
 }
 
 /* ===== 设置面板 ===== */
 .settings-panel {
-  position: absolute;
-  z-index: 50;
+  position: fixed;
+  z-index: 70;
   min-width: 170px;
-  background: var(--card-bg);
+  background: var(--panel-bg);
   border: 1px solid var(--card-border);
   border-radius: 14px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   padding: 8px;
   display: none;
   flex-direction: column;

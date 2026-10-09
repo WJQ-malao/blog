@@ -64,9 +64,11 @@
     if (t) {
       e.preventDefault();
       if (!panel) buildPanel();
-      var r = t.getBoundingClientRect();
-      panel.style.top = (r.bottom + window.scrollY + 10) + 'px';
-      panel.style.left = Math.max(12, r.left + window.scrollX - 60) + 'px';
+      var nav = t.closest('nav');
+      var r = nav ? nav.getBoundingClientRect() : t.getBoundingClientRect();
+      panel.style.top = (r.bottom + 10) + 'px';
+      panel.style.right = '16px';
+      panel.style.left = 'auto';
       panel.classList.toggle('open');
       return;
     }
