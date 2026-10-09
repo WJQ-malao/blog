@@ -66,9 +66,10 @@
       if (!panel) buildPanel();
       var parentPanel = t.closest('.nav-overflow-panel');
       if (parentPanel) {
-        // 在汉堡面板里点设置：子菜单贴着父菜单左侧飞出
+        // 在汉堡面板里点设置：子菜单与该项同一水平线，贴着面板左侧飞出
         var pr = parentPanel.getBoundingClientRect();
-        panel.style.top = pr.top + 'px';
+        var tr = t.getBoundingClientRect();
+        panel.style.top = tr.top + 'px';
         panel.style.right = (window.innerWidth - pr.left + 10) + 'px';
         panel.style.left = 'auto';
       } else {
