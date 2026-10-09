@@ -140,6 +140,19 @@
     }
     nav.open .nav-links a:first-child { border-top: none; }
   }
+
+  /* 统一汉堡面板（覆盖旧规则） */
+  .nav-links { display: flex; }
+  .nav-links a.nav-overflow { display: none; }
+  .nav-overflow-panel { display: none; position: absolute; top: calc(100% + 10px); right: 16px; flex-direction: column; gap: 0; min-width: 160px; padding: 8px; background: #2a1650; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 60; }
+  nav.open .nav-overflow-panel { display: flex; }
+  .nav-overflow-panel a { padding: 9px 12px; border-radius: 10px; color: #b8b3cc; text-decoration: none; font-size: 15px; border-top: none; }
+  .nav-overflow-panel a:hover { background: rgba(139,92,246,.16); color: #c4b5fd; }
+  @media (max-width: 760px) {
+    .nav-links { display: flex; flex-direction: row; gap: 16px; width: auto; padding-top: 0; }
+    .nav-links a { font-size: 14px; border-top: none; padding: 0; }
+    nav.open .nav-links { display: flex; }
+  }
 </style>
 </head>
 <body>
