@@ -15,6 +15,8 @@
     localStorage.setItem(KEY, id);
     renderChecks();
     closePanel();
+    // 选完皮肤后连同汉堡面板一起关闭
+    document.querySelectorAll('nav.open').forEach(function (n) { n.classList.remove('open'); });
   }
 
   function buildPanel() {

@@ -12,7 +12,7 @@ document.addEventListener('click', function (e) {
     if (nav) nav.classList.remove('open');
     return;
   }
-  if (!e.target.closest('nav')) {
+  if (!e.target.closest('nav') && !e.target.closest('.settings-panel')) {
     document.querySelectorAll('nav.open').forEach(function (n) { n.classList.remove('open'); });
   }
 });
