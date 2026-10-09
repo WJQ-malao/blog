@@ -53,6 +53,17 @@
   .nav-links { display: flex; gap: 28px; }
   .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 15px; transition: color .2s; }
   .nav-links a:hover { color: var(--accent2); }
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    font-family: inherit;
+  }
 
   .container {
     position: relative;
@@ -99,8 +110,20 @@
   @media (max-width: 760px) {
     nav { padding: 10px 16px; flex-wrap: wrap; gap: 10px; }
     .brand img { width: 32px; height: 32px; }
-    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
-    .nav-links a { font-size: 13.5px; }
+    .menu-toggle { display: block; }
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      gap: 0;
+      padding-top: 8px;
+    }
+    nav.open .nav-links { display: flex; }
+    .nav-links a {
+      font-size: 15px;
+      padding: 10px 4px;
+      border-top: 1px solid var(--card-border);
+    }
   }
 </style>
 </head>
@@ -120,6 +143,7 @@
     <a href="javascript:;" class="settings-toggle" data-zh="设置" data-en="Settings">设置</a>
     <a href="javascript:;" class="lang-toggle">English</a>
   </div>
+  <button class="menu-toggle" aria-label="菜单">☰</button>
 </nav>
 
 <main class="container">
@@ -185,5 +209,6 @@
 
 <script src="/js/lang.js"></script>
 <script src="/js/settings.js"></script>
+<script src="/js/nav.js"></script>
 </body>
 </html>

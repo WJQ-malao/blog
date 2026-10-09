@@ -106,6 +106,13 @@
     .nav-links a { font-size: 13.5px; }
     .game-card { padding: 18px; }
   }
+  .menu-toggle { display: none; background: none; border: none; color: #b8b3cc; font-size: 22px; cursor: pointer; padding: 4px 8px; line-height: 1; font-family: inherit; }
+  @media (max-width: 760px) {
+    .menu-toggle { display: block; }
+    .nav-links { display: none; flex-direction: column; width: 100%; gap: 0; padding-top: 8px; }
+    nav.open .nav-links { display: flex; }
+    .nav-links a { font-size: 15px; padding: 10px 4px; border-top: 1px solid rgba(255,255,255,.10); }
+  }
 </style>
 </head>
 <body>
@@ -122,6 +129,7 @@
     <a href="/subscribe/">RSS</a>
     <a href="/game/">GAME</a>
   </div>
+  <button class="menu-toggle" aria-label="菜单">☰</button>
 </nav>
 
 <main class="container">
@@ -323,5 +331,6 @@
 })();
 </script>
 
+<script src="/js/nav.js"></script>
 </body>
 </html>
