@@ -64,11 +64,21 @@
     if (t) {
       e.preventDefault();
       if (!panel) buildPanel();
-      var nav = t.closest('nav');
-      var r = nav ? nav.getBoundingClientRect() : t.getBoundingClientRect();
-      panel.style.top = (r.bottom + 10) + 'px';
-      panel.style.right = '16px';
-      panel.style.left = 'auto';
+      var parentPanel = t.closest('.nav-overflow-panel');
+      if (parentPanel) {
+        // 在汉堡面板里点设置：子菜单贴着父菜单左侧飞出
+        var pr = parentPanel.getBoundingClientRect();
+        panel.style.top = pr.top + 'px';
+        panel.style.right = (window.innerWidth - pr.left + 10) + 'px';
+        panel.style.left = 'auto';
+      } else {
+        // 其他位置（如手机端栏内）：锚定导航栏右下
+        var nav = t.closest('nav');
+        var r = nav ? nav.getBoundingClientRect() : t.getBoundingClientRect();
+        panel.style.top = (r.bottom + 10) + 'px';
+        panel.style.right = '16px';
+        panel.style.left = 'auto';
+      }
       panel.classList.toggle('open');
       return;
     }

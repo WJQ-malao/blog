@@ -7,7 +7,7 @@ document.addEventListener('click', function (e) {
     return;
   }
   var link = e.target.closest('nav a');
-  if (link) {
+  if (link && !link.classList.contains('settings-toggle')) {
     var nav = link.closest('nav');
     if (nav) nav.classList.remove('open');
     return;
