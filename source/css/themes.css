@@ -1,0 +1,63 @@
+/* ===== 全站主题变量 ===== */
+:root, html[data-theme="purple"] {
+  --bg1: #150829; --bg2: #241040; --bg3: #31135c;
+  --glow1: rgba(124, 77, 255, .28); --glow2: rgba(0, 229, 255, .14);
+  --text: #e9e4fb; --text-soft: #d5d1e3; --text-dim: #b8b3cc; --text-faint: #7d7696;
+  --accent: #8b5cf6; --accent2: #c4b5fd; --accent-soft: rgba(139, 92, 246, .16);
+  --card-bg: rgba(255, 255, 255, .06); --card-border: rgba(255, 255, 255, .10);
+  --code-bg: #10081f; --code-text: #e9d5ff; --tag: #67e8f9;
+  --shadow: rgba(139, 92, 246, .45);
+}
+html[data-theme="blue"] {
+  --bg1: #0b1d3a; --bg2: #12294d; --bg3: #1b3a66;
+  --glow1: rgba(64, 140, 255, .25); --glow2: rgba(0, 200, 255, .12);
+  --text: #e8f1ff; --text-soft: #d0dcf2; --text-dim: #a9bcd8; --text-faint: #6b7f9e;
+  --accent: #4f8ff7; --accent2: #8fc1ff; --accent-soft: rgba(79, 143, 247, .16);
+  --card-bg: rgba(255, 255, 255, .06); --card-border: rgba(255, 255, 255, .10);
+  --code-bg: #0a1830; --code-text: #d6e6ff; --tag: #67e8f9;
+  --shadow: rgba(79, 143, 247, .45);
+}
+html[data-theme="light"] {
+  --bg1: #f2f4fa; --bg2: #e9edf6; --bg3: #dfe6f3;
+  --glow1: rgba(139, 92, 246, .10); --glow2: rgba(0, 180, 255, .08);
+  --text: #20263a; --text-soft: #3a4358; --text-dim: #5b6478; --text-faint: #98a1b5;
+  --accent: #7c3aed; --accent2: #8b5cf6; --accent-soft: rgba(124, 58, 237, .10);
+  --card-bg: rgba(255, 255, 255, .72); --card-border: rgba(30, 27, 75, .10);
+  --code-bg: #eae6f7; --code-text: #4c1d95; --tag: #0891b2;
+  --shadow: rgba(124, 58, 237, .25);
+}
+
+/* ===== 设置面板 ===== */
+.settings-panel {
+  position: absolute;
+  z-index: 50;
+  min-width: 170px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+}
+.settings-panel.open { display: flex; }
+.settings-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.settings-item:hover { background: var(--accent-soft); }
+.settings-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0, 0, 0, .2); }
+.settings-check { margin-left: auto; color: var(--accent2); font-weight: 700; }
