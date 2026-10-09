@@ -64,7 +64,7 @@
   }
   .nav-links a:hover { color: var(--accent2); }
   .menu-toggle {
-    display: none;
+    display: block;
     background: none;
     border: none;
     color: var(--text-dim);
@@ -73,6 +73,30 @@
     padding: 4px 8px;
     line-height: 1;
     font-family: inherit;
+  }
+  .menu-toggle:hover { color: var(--accent2); }
+  @media (min-width: 761px) {
+    .nav-links a.nav-overflow { display: none; }
+    nav.open .nav-links {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      min-width: 160px;
+      padding: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+      z-index: 60;
+    }
+    nav.open .nav-links a { display: none; padding: 9px 12px; border-radius: 10px; }
+    nav.open .nav-links a.nav-overflow { display: block; }
+    nav.open .nav-links a:hover { background: var(--accent-soft); }
   }
 
   /* 主视觉区 */
@@ -144,20 +168,30 @@
       gap: 10px;
     }
     .brand img { width: 32px; height: 32px; }
-    .menu-toggle { display: block; }
-    .nav-links {
-      display: none;
+    .nav-links { display: none; }
+    nav.open .nav-links {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 16px;
+      display: flex;
       flex-direction: column;
-      width: 100%;
       gap: 0;
-      padding-top: 8px;
+      width: min(200px, 60vw);
+      padding: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+      z-index: 60;
     }
-    nav.open .nav-links { display: flex; }
-    .nav-links a {
+    nav.open .nav-links a {
       font-size: 15px;
-      padding: 10px 4px;
+      padding: 10px 12px;
       border-top: 1px solid var(--card-border);
     }
+    nav.open .nav-links a:first-child { border-top: none; }
     .hero { padding: 40px 0; }
     .hero-text p { margin-bottom: 32px; }
   }
@@ -181,9 +215,9 @@
   <div class="nav-links">
     <a href="/" data-zh="首页" data-en="Home">首页</a>
     <a href="/blog/" data-zh="博客" data-en="Blog">博客</a>
-    <a href="/archives/" data-zh="归档" data-en="Archives">归档</a>
-    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
-    <a href="/subscribe/" title="RSS 订阅">RSS</a>
+    <a href="/archives/" class="nav-overflow" data-zh="归档" data-en="Archives">归档</a>
+    <a href="https://gitee.com/wujiang-j" class="nav-overflow" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/" class="nav-overflow" title="RSS 订阅">RSS</a>
     <a href="/game/" title="小游戏">GAME</a>
     <a href="javascript:;" class="settings-toggle" data-zh="设置" data-en="Settings">设置</a>
     <a href="javascript:;" class="lang-toggle">English</a>

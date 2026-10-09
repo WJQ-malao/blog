@@ -112,6 +112,30 @@
     nav.open .nav-links { display: flex; }
     .nav-links a { font-size: 15px; padding: 10px 4px; border-top: 1px solid rgba(255,255,255,.10); }
   }
+
+  .menu-toggle { display: block; }
+  .menu-toggle:hover { color: #c4b5fd; }
+  @media (min-width: 761px) {
+    .nav-links a.nav-overflow { display: none; }
+    nav.open .nav-links {
+      position: absolute; top: calc(100% + 10px); right: 16px;
+      display: flex; flex-direction: column; gap: 0; min-width: 160px; padding: 8px;
+      background: #2a1650; border: 1px solid rgba(255,255,255,.14); border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 60;
+    }
+    nav.open .nav-links a { display: none; padding: 9px 12px; border-radius: 10px; border-top: none; }
+    nav.open .nav-links a.nav-overflow { display: block; }
+    nav.open .nav-links a:hover { background: rgba(139,92,246,.16); }
+  }
+  @media (max-width: 760px) {
+    nav.open .nav-links {
+      position: absolute; top: calc(100% + 10px); right: 16px;
+      width: min(200px, 60vw); padding: 8px;
+      background: #2a1650; border: 1px solid rgba(255,255,255,.14); border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 60;
+    }
+    nav.open .nav-links a:first-child { border-top: none; }
+  }
 </style>
 </head>
 <body>
@@ -123,9 +147,9 @@
   <div class="nav-links">
     <a href="/">首页</a>
     <a href="/blog/">博客</a>
-    <a href="/archives/">归档</a>
-    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
-    <a href="/subscribe/">RSS</a>
+    <a href="/archives/" class="nav-overflow">归档</a>
+    <a href="https://gitee.com/wujiang-j" class="nav-overflow" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/" class="nav-overflow">RSS</a>
     <a href="/game/">GAME</a>
   </div>
   <button class="menu-toggle" aria-label="菜单">☰</button>
