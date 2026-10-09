@@ -65,14 +65,14 @@ nav {
 .menu-toggle:hover { color: var(--accent2); }
 nav { position: relative; }
 
-/* 桌面端：溢出项收进 ☰ 下拉 */
+/* 桌面端：溢出项收进 ☰ 下拉面板 */
 @media (min-width: 761px) {
   .nav-links a.nav-overflow { display: none; }
-  nav.open .nav-links {
+  .nav-overflow-panel {
+    display: none;
     position: absolute;
     top: calc(100% + 10px);
     right: 16px;
-    display: flex;
     flex-direction: column;
     gap: 0;
     min-width: 160px;
@@ -85,9 +85,18 @@ nav { position: relative; }
     box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
     z-index: 60;
   }
-  nav.open .nav-links a { display: none; padding: 9px 12px; border-radius: 10px; }
-  nav.open .nav-links a.nav-overflow { display: block; }
-  nav.open .nav-links a:hover { background: var(--accent-soft); }
+  nav.open .nav-overflow-panel { display: flex; }
+  .nav-overflow-panel a {
+    padding: 9px 12px;
+    border-radius: 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .nav-overflow-panel a:hover { background: var(--accent-soft); color: var(--accent2); }
+}
+@media (max-width: 760px) {
+  .nav-overflow-panel { display: none; }
 }
 
 /* 主容器 */

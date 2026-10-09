@@ -67,11 +67,11 @@
   .menu-toggle:hover { color: var(--accent2); }
   @media (min-width: 761px) {
     .nav-links a.nav-overflow { display: none; }
-    nav.open .nav-links {
+    .nav-overflow-panel {
+      display: none;
       position: absolute;
       top: calc(100% + 10px);
       right: 16px;
-      display: flex;
       flex-direction: column;
       gap: 0;
       min-width: 160px;
@@ -84,9 +84,18 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
       z-index: 60;
     }
-    nav.open .nav-links a { display: none; padding: 9px 12px; border-radius: 10px; }
-    nav.open .nav-links a.nav-overflow { display: block; }
-    nav.open .nav-links a:hover { background: var(--accent-soft); }
+    nav.open .nav-overflow-panel { display: flex; }
+    .nav-overflow-panel a {
+      padding: 9px 12px;
+      border-radius: 10px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 15px;
+    }
+    .nav-overflow-panel a:hover { background: var(--accent-soft); color: var(--accent2); }
+  }
+  @media (max-width: 760px) {
+    .nav-overflow-panel { display: none; }
   }
 
   .container {
@@ -174,8 +183,14 @@
     <a href="https://gitee.com/wujiang-j" class="nav-overflow" target="_blank" rel="noopener">Gitee</a>
     <a href="/subscribe/" class="nav-overflow" title="RSS 订阅">RSS</a>
     <a href="/game/" title="小游戏">GAME</a>
-    <a href="javascript:;" class="settings-toggle" data-zh="设置" data-en="Settings">设置</a>
+    <a href="javascript:;" class="settings-toggle nav-overflow" data-zh="设置" data-en="Settings">设置</a>
     <a href="javascript:;" class="lang-toggle">English</a>
+  </div>
+  <div class="nav-overflow-panel">
+    <a href="/archives/" data-zh="归档" data-en="Archives">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/" title="RSS 订阅">RSS</a>
+    <a href="javascript:;" class="settings-toggle" data-zh="设置" data-en="Settings">设置</a>
   </div>
   <button class="menu-toggle" aria-label="菜单">☰</button>
 </nav>

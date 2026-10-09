@@ -6,7 +6,7 @@ document.addEventListener('click', function (e) {
     t.closest('nav').classList.toggle('open');
     return;
   }
-  var link = e.target.closest('.nav-links a');
+  var link = e.target.closest('nav a');
   if (link) {
     var nav = link.closest('nav');
     if (nav) nav.classList.remove('open');

@@ -174,15 +174,19 @@
   .menu-toggle:hover { color: #c4b5fd; }
   @media (min-width: 761px) {
     .nav-links a.nav-overflow { display: none; }
-    nav.open .nav-links {
+    .nav-overflow-panel {
+      display: none;
       position: absolute; top: calc(100% + 10px); right: 16px;
-      display: flex; flex-direction: column; gap: 0; min-width: 160px; padding: 8px;
+      flex-direction: column; gap: 0; min-width: 160px; padding: 8px;
       background: #2a1650; border: 1px solid rgba(255,255,255,.14); border-radius: 14px;
       box-shadow: 0 12px 40px rgba(0,0,0,.35); z-index: 60;
     }
-    nav.open .nav-links a { display: none; padding: 9px 12px; border-radius: 10px; border-top: none; }
-    nav.open .nav-links a.nav-overflow { display: block; }
-    nav.open .nav-links a:hover { background: rgba(139,92,246,.16); }
+    nav.open .nav-overflow-panel { display: flex; }
+    .nav-overflow-panel a { padding: 9px 12px; border-radius: 10px; color: #b8b3cc; text-decoration: none; font-size: 15px; }
+    .nav-overflow-panel a:hover { background: rgba(139,92,246,.16); color: #c4b5fd; }
+  }
+  @media (max-width: 760px) {
+    .nav-overflow-panel { display: none; }
   }
   @media (max-width: 760px) {
     nav.open .nav-links {
@@ -208,6 +212,11 @@
     <a href="https://gitee.com/wujiang-j" class="nav-overflow" target="_blank" rel="noopener">Gitee</a>
     <a href="/subscribe/" class="nav-overflow">RSS</a>
     <a href="/game/">GAME</a>
+  </div>
+  <div class="nav-overflow-panel">
+    <a href="/archives/">归档</a>
+    <a href="https://gitee.com/wujiang-j" target="_blank" rel="noopener">Gitee</a>
+    <a href="/subscribe/">RSS</a>
   </div>
   <button class="menu-toggle" aria-label="菜单">☰</button>
 </nav>
