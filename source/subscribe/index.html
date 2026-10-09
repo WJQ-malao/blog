@@ -169,23 +169,23 @@
 
 <main class="container">
   <div class="card">
-    <h1>📡 订阅我的博客</h1>
-    <p>本站支持 RSS 订阅。把下面的订阅地址添加到你喜欢的 RSS 阅读器中，每当我发布新文章，你都会第一时间收到。</p>
+    <h1 data-zh="📡 订阅我的博客" data-en="📡 Subscribe to My Blog">📡 订阅我的博客</h1>
+    <p data-zh="本站支持 RSS 订阅。把下面的订阅地址添加到你喜欢的 RSS 阅读器中，每当我发布新文章，你都会第一时间收到。" data-en="This site supports RSS. Add the feed address below to your favorite RSS reader, and you'll get my new posts as soon as they're published.">本站支持 RSS 订阅。把下面的订阅地址添加到你喜欢的 RSS 阅读器中，每当我发布新文章，你都会第一时间收到。</p>
 
     <div class="feed-box">
       <div class="feed-url" id="feedUrl">https://wjqblog.cn/atom.xml</div>
-      <button class="copy-btn" id="copyBtn" onclick="copyFeed()">复制订阅地址</button>
+      <button class="copy-btn" id="copyBtn" onclick="copyFeed()" data-zh="复制订阅地址" data-en="Copy Feed URL">复制订阅地址</button>
     </div>
 
     <div class="steps">
-      <h2>如何订阅？</h2>
+      <h2 data-zh="如何订阅？" data-en="How to subscribe?">如何订阅？</h2>
       <ol>
-        <li>安装一个 RSS 阅读器（任选其一，均免费）</li>
-        <li>在阅读器中找到「添加订阅源 / Add Feed」</li>
-        <li>粘贴上面的订阅地址，确认添加</li>
-        <li>完成！新文章会自动出现在你的阅读器里</li>
+        <li data-zh="安装一个 RSS 阅读器（任选其一，均免费）" data-en="Install an RSS reader (any of them, all free)">安装一个 RSS 阅读器（任选其一，均免费）</li>
+        <li data-zh="在阅读器中找到「添加订阅源 / Add Feed」" data-en="Find 'Add Feed' in your reader">在阅读器中找到「添加订阅源 / Add Feed」</li>
+        <li data-zh="粘贴上面的订阅地址，确认添加" data-en="Paste the feed address above and confirm">粘贴上面的订阅地址，确认添加</li>
+        <li data-zh="完成！新文章会自动出现在你的阅读器里" data-en="Done! New posts will show up in your reader automatically">完成！新文章会自动出现在你的阅读器里</li>
       </ol>
-      <h2>推荐的阅读器</h2>
+      <h2 data-zh="推荐的阅读器" data-en="Recommended readers">推荐的阅读器</h2>
       <div class="readers">
         <span class="reader-tag">Follow</span>
         <span class="reader-tag">Feedly</span>
@@ -194,7 +194,7 @@
       </div>
     </div>
 
-    <a class="back-link" href="/blog/">← 返回博客</a>
+    <a class="back-link" href="/blog/" data-zh="← 返回博客" data-en="← Back to Blog">← 返回博客</a>
   </div>
 </main>
 
@@ -204,9 +204,10 @@
 function copyFeed() {
   var url = document.getElementById('feedUrl').textContent.trim();
   var btn = document.getElementById('copyBtn');
+  var isEn = localStorage.getItem('site-lang') === 'en';
   function done() {
-    btn.textContent = '已复制 ✓';
-    setTimeout(function () { btn.textContent = '复制订阅地址'; }, 2000);
+    btn.textContent = isEn ? 'Copied ✓' : '已复制 ✓';
+    setTimeout(function () { btn.textContent = isEn ? 'Copy Feed URL' : '复制订阅地址'; }, 2000);
   }
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(url).then(done);
