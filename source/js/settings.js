@@ -14,30 +14,49 @@
     document.documentElement.dataset.theme = id;
     localStorage.setItem(KEY, id);
     renderChecks();
+    closePanel();
   }
 
   function buildPanel() {
     panel = document.createElement('div');
     panel.className = 'settings-panel';
-    panel.innerHTML = THEMES.map(function (t) {
-      return '<button class="settings-item" data-id="' + t.id + '">' +
-        '<span class="settings-dot" style="background:' + t.dot + '"></span>' +
-        '<span>' + (lang() === 'en' ? t.en : t.zh) + '</span>' +
-        '<span class="settings-check">' + (cur() === t.id ? '✓' : '') + '</span>' +
-        '</button>';
-    }).join('');
+    panel.innerHTML =
+      '<button class="settings-item settings-parent">' +
+        '<span class="settings-ico">🎨</span>' +
+        '<span data-zh="风格" data-en="Style">' + (lang() === 'en' ? 'Style' : '风格') + '</span>' +
+        '<span class="settings-arrow">›</span>' +
+      '</button>' +
+      '<div class="settings-sub">' +
+        THEMES.map(function (t) {
+          return '<button class="settings-item" data-id="' + t.id + '">' +
+            '<span class="settings-dot" style="background:' + t.dot + '"></span>' +
+            '<span>' + (lang() === 'en' ? t.en : t.zh) + '</span>' +
+            '<span class="settings-check">' + (cur() === t.id ? '✓' : '') + '</span>' +
+            '</button>';
+        }).join('') +
+      '</div>';
     document.body.appendChild(panel);
-    panel.addEventListener('click', function (e) {
-      var b = e.target.closest('.settings-item');
+
+    // 点"风格"展开/收起子菜单
+    panel.querySelector('.settings-parent').addEventListener('click', function () {
+      panel.classList.toggle('sub-open');
+    });
+    // 点具体皮肤
+    panel.querySelector('.settings-sub').addEventListener('click', function (e) {
+      var b = e.target.closest('.settings-item[data-id]');
       if (b) apply(b.dataset.id);
     });
   }
 
   function renderChecks() {
     if (!panel) return;
-    panel.querySelectorAll('.settings-item').forEach(function (b) {
+    panel.querySelectorAll('.settings-item[data-id]').forEach(function (b) {
       b.querySelector('.settings-check').textContent = cur() === b.dataset.id ? '✓' : '';
     });
+  }
+
+  function closePanel() {
+    if (panel) panel.classList.remove('open');
   }
 
   document.addEventListener('click', function (e) {
@@ -51,6 +70,6 @@
       panel.classList.toggle('open');
       return;
     }
-    if (panel && !e.target.closest('.settings-panel')) panel.classList.remove('open');
+    if (panel && !e.target.closest('.settings-panel')) closePanel();
   });
 })();

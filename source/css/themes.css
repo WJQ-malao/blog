@@ -59,5 +59,18 @@ html[data-theme="light"] {
   text-align: left;
 }
 .settings-item:hover { background: var(--accent-soft); }
+.settings-ico { flex-shrink: 0; }
+.settings-parent { font-weight: 600; }
+.settings-arrow { margin-left: auto; color: var(--text-faint); transition: transform .2s; font-size: 16px; }
+.settings-panel.sub-open .settings-arrow { transform: rotate(90deg); }
+.settings-sub {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 12px;
+  padding-left: 10px;
+  border-left: 2px solid var(--card-border);
+}
+.settings-panel.sub-open .settings-sub { display: flex; }
 .settings-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0, 0, 0, .2); }
 .settings-check { margin-left: auto; color: var(--accent2); font-weight: 700; }
