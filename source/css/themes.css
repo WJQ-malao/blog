@@ -68,9 +68,7 @@ html[data-theme="light"] {
   display: none;
   flex-direction: column;
   gap: 4px;
-  margin-left: 12px;
-  padding-left: 10px;
-  border-left: 2px solid var(--card-border);
+  margin-top: 4px;
 }
 .settings-panel.sub-open .settings-sub { display: flex; }
 .settings-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0, 0, 0, .2); }
