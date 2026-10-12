@@ -214,6 +214,9 @@ nav.open .nav-overflow-panel { display: flex; }
 .post-nav { display: flex; justify-content: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
 .post-nav .next { margin-left: auto; }
 
+/* 评论区 */
+.comments { padding: 24px 30px; margin-top: 24px; }
+
 /* 正文排版 */
 .content { font-size: 15.5px; color: var(--text-soft); margin-top: 20px; }
 .content h1, .content h2, .content h3, .content h4 {
