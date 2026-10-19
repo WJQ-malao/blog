@@ -114,6 +114,202 @@ nav.open .nav-overflow-panel { display: flex; }
   transition: transform .2s, border-color .2s, box-shadow .2s;
 }
 
+/* 关于我 */
+.about-page {
+  --about-intern: #7dd3fc;
+  --about-intern-soft: rgba(125, 211, 252, .14);
+  --about-ai: #22d3ee;
+  --about-ai-soft: rgba(34, 211, 238, .14);
+  --about-business: #fbbf24;
+  --about-business-soft: rgba(251, 191, 36, .15);
+  --about-agent: #34d399;
+  --about-agent-soft: rgba(52, 211, 153, .14);
+}
+html[data-theme="light"] .about-page {
+  --about-intern: #2563eb;
+  --about-intern-soft: rgba(37, 99, 235, .10);
+  --about-ai: #0891b2;
+  --about-ai-soft: rgba(8, 145, 178, .10);
+  --about-business: #b45309;
+  --about-business-soft: rgba(180, 83, 9, .11);
+  --about-agent: #059669;
+  --about-agent-soft: rgba(5, 150, 105, .10);
+}
+.about-page .about-heading { text-align: center; margin-bottom: 32px; }
+.about-page .about-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.about-page .about-heading h1 {
+  color: var(--text);
+  font-size: clamp(30px, 5vw, 44px);
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+.about-page .about-heading p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.8;
+}
+.about-page .about-grid { display: grid; grid-template-columns: .85fr 1.35fr; gap: 20px; }
+.about-page .about-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 26px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.about-page .about-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent2), transparent);
+}
+.about-page .card-label {
+  display: inline-block;
+  padding: 5px 11px;
+  color: var(--accent2);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.about-page .about-card h2 {
+  margin: 14px 0 10px;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.5;
+}
+.about-page .about-card p {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.about-page .about-meta { color: var(--text-faint); font-size: 13px; }
+.about-page .education {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--card-border);
+}
+.about-page .education-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+.about-page .education strong { display: block; color: var(--text); font-size: 15px; line-height: 1.7; }
+.about-page .education span:last-child { display: block; margin-top: 5px; color: var(--text-dim); font-size: 13px; line-height: 1.7; }
+.about-page .about-actions { margin-top: 22px; }
+.about-page .about-link, .about-page .code-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  color: var(--accent2);
+  background: var(--accent-soft);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .2s, border-color .2s, background .2s;
+}
+.about-page .about-link::after, .about-page .code-link::after { content: "→"; margin-left: 6px; }
+.about-page .about-link:hover, .about-page .code-link:hover { transform: translateY(-2px); border-color: currentColor; }
+.about-page .about-link:focus-visible, .about-page .code-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.about-page .experience-card::before { background: linear-gradient(90deg, var(--about-intern), transparent); }
+.about-page .experience-card:hover { border-color: var(--about-intern); }
+.about-page .experience-card .card-label { color: var(--about-intern); background: var(--about-intern-soft); }
+.about-page .experience-list { list-style: none; display: grid; gap: 12px; margin-top: 18px; }
+.about-page .experience-list li {
+  position: relative;
+  padding-left: 17px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.about-page .experience-list li::before {
+  content: "";
+  position: absolute;
+  top: .72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--about-intern);
+}
+.about-page .skills-card { margin-top: 20px; }
+.about-page .skills-card::before { background: linear-gradient(90deg, var(--accent2), var(--about-ai), var(--about-agent)); }
+.about-page .skill-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.about-page .skill-item {
+  padding: 18px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent2);
+  border-radius: 14px;
+}
+.about-page .skill-ai { background: var(--about-ai-soft); border-left-color: var(--about-ai); }
+.about-page .skill-ops { background: var(--about-agent-soft); border-left-color: var(--about-agent); }
+.about-page .skill-item h3 { margin-bottom: 8px; color: var(--text); font-size: 14px; }
+.about-page .skill-item p { color: var(--text-dim); font-size: 13px; line-height: 1.8; }
+.about-page .projects-heading { margin: 34px 0 18px; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.about-page .projects-heading h2 { color: var(--text); font-size: 24px; }
+.about-page .projects-heading p { color: var(--text-faint); font-size: 13px; }
+.about-page .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.about-page .project-card { display: flex; flex-direction: column; transition: transform .2s, border-color .2s, box-shadow .2s; }
+.about-page .project-card:hover { transform: translateY(-4px); border-color: var(--accent2); box-shadow: 0 10px 34px var(--shadow); }
+.about-page .project-card p { flex: 1; }
+.about-page .project-ai::before { background: linear-gradient(90deg, var(--about-ai), transparent); }
+.about-page .project-business::before { background: linear-gradient(90deg, var(--about-business), transparent); }
+.about-page .project-agent::before { background: linear-gradient(90deg, var(--about-agent), transparent); }
+.about-page .project-ai:hover { border-color: var(--about-ai); }
+.about-page .project-business:hover { border-color: var(--about-business); }
+.about-page .project-agent:hover { border-color: var(--about-agent); }
+.about-page .project-ai .about-meta { color: var(--about-ai); }
+.about-page .project-business .about-meta { color: var(--about-business); }
+.about-page .project-agent .about-meta { color: var(--about-agent); }
+.about-page .project-footer { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 20px; }
+.about-page .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.about-page .project-footer .tag-list { margin-top: 0; }
+.about-page .tag-list span {
+  padding: 4px 9px;
+  color: var(--accent2);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.about-page .project-ai .tag-list span { color: var(--about-ai); background: var(--about-ai-soft); }
+.about-page .project-business .tag-list span { color: var(--about-business); background: var(--about-business-soft); }
+.about-page .project-agent .tag-list span { color: var(--about-agent); background: var(--about-agent-soft); }
+.about-page .project-ai .code-link { color: var(--about-ai); background: var(--about-ai-soft); }
+.about-page .project-agent .code-link { color: var(--about-agent); background: var(--about-agent-soft); }
+
+@media (max-width: 900px) {
+  .about-page .about-grid { grid-template-columns: 1fr; }
+  .about-page .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .about-page .about-heading { margin-bottom: 24px; }
+  .about-page .about-heading p { font-size: 14px; }
+  .about-page .about-card { padding: 22px; border-radius: 16px; }
+  .about-page .skill-grid, .about-page .project-grid { grid-template-columns: 1fr; }
+  .about-page .projects-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+}
+
 /* 博客列表工具栏（搜索 + 排序） */
 .list-toolbar { display: flex; gap: 12px; margin-bottom: 20px; }
 .search-input {
