@@ -251,6 +251,12 @@ html[data-theme="light"] .about-page {
   border-radius: 50%;
   background: var(--about-intern);
 }
+.about-page .experience-list li strong { color: var(--text); }
+.about-page .experience-summary { color: var(--text-dim); font-size: 14px; line-height: 1.75; margin-top: 14px; }
+.about-page .exp-project { margin-top: 24px; }
+.about-page .exp-project h3 { font-size: 15.5px; margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.about-page .exp-project .exp-sub { font-size: 12.5px; font-weight: 400; color: var(--text-faint); }
+.about-page .exp-desc { color: var(--text-faint); font-size: 13px; line-height: 1.7; margin-top: 8px; }
 .about-page .skills-card { margin-top: 20px; }
 .about-page .skills-card::before { background: linear-gradient(90deg, var(--accent2), var(--about-ai), var(--about-agent)); }
 .about-page .skill-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
