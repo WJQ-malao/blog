@@ -29,7 +29,6 @@ layout: about
     <h2 data-zh="Java 后端开发实习生" data-en="Java Backend Developer Intern">Java 后端开发实习生</h2>
     <p class="about-meta"><span>广州市要飞那信息科技有限公司</span> · <span data-zh="2026.07—至今" data-en="Jul 2026 — Present">2026.07—至今</span></p>
     <p class="experience-summary" data-zh="实习期间参与 ToB 企业级 OA 后台项目后端开发，完整覆盖需求沟通、数据表设计、功能开发、联调测试全流程，独立负责采购、物流、库存、绩效报表等核心模块的设计与落地，保障业务稳定迭代上线。" data-en="Worked end to end on backend development for a ToB enterprise OA platform — requirement alignment, schema design, feature development, and joint testing — independently owning core modules across procurement, logistics, inventory, and performance reporting to keep the business shipping reliably.">实习期间参与 ToB 企业级 OA 后台项目后端开发，完整覆盖需求沟通、数据表设计、功能开发、联调测试全流程，独立负责采购、物流、库存、绩效报表等核心模块的设计与落地，保障业务稳定迭代上线。</p>
-
     <div class="exp-project">
       <h3><span data-zh="OA 企业管理及物流系统" data-en="OA Enterprise Management &amp; Logistics System">OA 企业管理及物流系统</span><span class="exp-sub" data-zh="企业业务管理为一体的管理平台" data-en="an all-in-one business management platform">企业业务管理为一体的管理平台</span></h3>
       <p class="exp-desc" data-zh="企业一体化办公底座，承载采购申请、比价评审、合同履约、物流台账等全链路审批业务。" data-en="An integrated enterprise office backbone carrying full-chain approval workflows: purchase requests, quote reviews, contract fulfillment, and logistics ledgers.">企业一体化办公底座，承载采购申请、比价评审、合同履约、物流台账等全链路审批业务。</p>
@@ -41,7 +40,6 @@ layout: about
         <li data-zh="<strong>审批底座迭代</strong>：复用 OA 底层工作流引擎，持续迭代适配采购业务各类审批场景，打通业务单据与流程引擎的数据交互，统一审批流转规范，抽离公共流程逻辑，减少重复开发成本。" data-en="<strong>Approval foundation</strong>: reused the OA workflow engine across procurement approval scenarios, connected business documents with the process engine, unified approval-routing conventions, and extracted shared flow logic to cut duplicate development."><strong>审批底座迭代</strong>：复用 OA 底层工作流引擎，持续迭代适配采购业务各类审批场景，打通业务单据与流程引擎的数据交互，统一审批流转规范，抽离公共流程逻辑，减少重复开发成本。</li>
       </ul>
     </div>
-
     <div class="exp-project">
       <h3><span data-zh="OKR 绩效量化核算平台" data-en="OKR Performance Quantification Platform">OKR 绩效量化核算平台</span><span class="exp-sub" data-zh="面向企业的绩效核算平台" data-en="an enterprise performance-accounting platform">面向企业的绩效核算平台</span></h3>
       <p class="exp-desc" data-zh="支撑 OKR 填报、奖金预算编制、绩效指标统计与数据看板。" data-en="Supports OKR reporting, bonus budgeting, performance-metric statistics, and data dashboards.">支撑 OKR 填报、奖金预算编制、绩效指标统计与数据看板。</p>
