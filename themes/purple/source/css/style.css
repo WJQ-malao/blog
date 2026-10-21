@@ -176,7 +176,7 @@ html[data-theme="light"] .about-page {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent2), transparent);
+  background: linear-gradient(90deg, var(--accent2), color-mix(in srgb, var(--accent2) 45%, transparent) 45%, transparent 80%);
 }
 .about-page .card-label {
   display: inline-block;
@@ -230,7 +230,7 @@ html[data-theme="light"] .about-page {
 .about-page .about-link::after, .about-page .code-link::after { content: "→"; margin-left: 6px; }
 .about-page .about-link:hover, .about-page .code-link:hover { transform: translateY(-2px); border-color: currentColor; }
 .about-page .about-link:focus-visible, .about-page .code-link:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-.about-page .experience-card::before { background: linear-gradient(90deg, var(--about-intern), transparent); }
+.about-page .experience-card::before { background: linear-gradient(90deg, var(--about-intern), color-mix(in srgb, var(--about-intern) 45%, transparent) 45%, transparent 80%); }
 .about-page .experience-card:hover { border-color: var(--about-intern); }
 .about-page .experience-card .card-label { color: var(--about-intern); background: var(--about-intern-soft); }
 .about-page .experience-list { list-style: none; display: grid; gap: 12px; margin-top: 18px; }
@@ -277,9 +277,9 @@ html[data-theme="light"] .about-page {
 .about-page .project-card { display: flex; flex-direction: column; transition: transform .2s, border-color .2s, box-shadow .2s; }
 .about-page .project-card:hover { transform: translateY(-4px); border-color: var(--accent2); box-shadow: 0 10px 34px var(--shadow); }
 .about-page .project-card p { flex: 1; }
-.about-page .project-ai::before { background: linear-gradient(90deg, var(--about-ai), transparent); }
-.about-page .project-business::before { background: linear-gradient(90deg, var(--about-business), transparent); }
-.about-page .project-agent::before { background: linear-gradient(90deg, var(--about-agent), transparent); }
+.about-page .project-ai::before { background: linear-gradient(90deg, var(--about-ai), color-mix(in srgb, var(--about-ai) 45%, transparent) 45%, transparent 80%); }
+.about-page .project-business::before { background: linear-gradient(90deg, var(--about-business), color-mix(in srgb, var(--about-business) 45%, transparent) 45%, transparent 80%); }
+.about-page .project-agent::before { background: linear-gradient(90deg, var(--about-agent), color-mix(in srgb, var(--about-agent) 45%, transparent) 45%, transparent 80%); }
 .about-page .project-ai:hover { border-color: var(--about-ai); }
 .about-page .project-business:hover { border-color: var(--about-business); }
 .about-page .project-agent:hover { border-color: var(--about-agent); }
